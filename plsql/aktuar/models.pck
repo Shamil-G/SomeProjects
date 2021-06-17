@@ -1,6 +1,6 @@
 create or replace package models is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 20.10.2020 16:44:06
   -- Purpose : test python
 
@@ -36,7 +36,7 @@ create or replace package body models is
   is
   msg varchar2(1000);
   begin
-    msg:='INS Получено: '||ititle || ' : ' || iintro || ' : '||itext;
+    msg:='INS РџРѕР»СѓС‡РµРЅРѕ: '||ititle || ' : ' || iintro || ' : '||itext;
     insert into protocol values(sysdate, msg);
     commit;
     insert into aktuar_models(id_model, title, intro, text, dat) values(seq_model.nextval, ititle, iintro, itext, sysdate);
@@ -47,7 +47,7 @@ create or replace package body models is
   is
   msg varchar2(64);
   begin
-    msg:='DEL Удалена статья : '||iid;
+    msg:='DEL РЈРґР°Р»РµРЅР° СЃС‚Р°С‚СЊСЏ : '||iid;
     insert into protocol values(sysdate, msg);
     commit;
 --    delete from aktuar_models a where a.id_model = iid;
@@ -58,7 +58,7 @@ create or replace package body models is
   is
   msg varchar2(1000);
   begin
-    msg:='UPD Получено: '||ititle || ' : ' || iintro || ' : '||itext;
+    msg:='UPD РџРѕР»СѓС‡РµРЅРѕ: '||ititle || ' : ' || iintro || ' : '||itext;
     insert into protocol values(sysdate, msg);
     commit;
     update aktuar_models a
@@ -76,7 +76,7 @@ create or replace package body models is
   msg varchar2(1000);
       id_calculate pls_integer;
   begin
-    msg:='Model_calc_new. Получен модель: '||iid_model || ', месяц расчета: ' || trunc(to_date(idate_calc,'YYYY-MM-DD'),'MM');
+    msg:='Model_calc_new. РџРѕР»СѓС‡РµРЅ РјРѕРґРµР»СЊ: '||iid_model || ', РјРµСЃСЏС† СЂР°СЃС‡РµС‚Р°: ' || trunc(to_date(idate_calc,'YYYY-MM-DD'),'MM');
     insert into protocol values(sysdate, msg);
     commit;
     id_calculate:=SEQ_MODEL_CALC.NEXTVAL;
@@ -88,7 +88,7 @@ create or replace package body models is
     
     exception when dup_val_on_index then 
       begin
-            msg:='Model_calc_new. Дублирование вставки модели: '||iid_model || ', месяц расчета: ' || trunc(to_date(idate_calc,'YYYY-MM-DD'),'MM');
+            msg:='Model_calc_new. Р”СѓР±Р»РёСЂРѕРІР°РЅРёРµ РІСЃС‚Р°РІРєРё РјРѕРґРµР»Рё: '||iid_model || ', РјРµСЃСЏС† СЂР°СЃС‡РµС‚Р°: ' || trunc(to_date(idate_calc,'YYYY-MM-DD'),'MM');
             insert into protocol values(sysdate, msg);
     commit;
 
@@ -99,7 +99,7 @@ create or replace package body models is
   is
   msg varchar2(1000);
   begin
-    msg:='Model_calc_del. Удаляем расчеты с id_calc: '||iid_calc;
+    msg:='Model_calc_del. РЈРґР°Р»СЏРµРј СЂР°СЃС‡РµС‚С‹ СЃ id_calc: '||iid_calc;
     insert into protocol values(sysdate, msg);
     commit;
     delete from model_calculates where id_calc=iid_calc;
@@ -120,7 +120,7 @@ create or replace package body models is
     and   sc.beg_time_0705 is null;
 
     if v_record.id_calc is null then
-      log('0705: Не найдено задание для расчета');
+      log('0705: РќРµ РЅР°Р№РґРµРЅРѕ Р·Р°РґР°РЅРёРµ РґР»СЏ СЂР°СЃС‡РµС‚Р°');
       return;
     end if;
         
@@ -137,7 +137,7 @@ create or replace package body models is
                sc.end_time_0705=sysdate
     where sc.id_calc=v_record.id_calc;
     commit;
-    exception when others then log('0705. Ошибка: '||sqlerrm);
+    exception when others then log('0705. РћС€РёР±РєР°: '||sqlerrm);
   end;
 
   procedure run_0703
@@ -153,7 +153,7 @@ create or replace package body models is
 
     
     if v_record.id_calc is null then
-      log('0703: Не найдено задание для расчета');
+      log('0703: РќРµ РЅР°Р№РґРµРЅРѕ Р·Р°РґР°РЅРёРµ РґР»СЏ СЂР°СЃС‡РµС‚Р°');
       return;
     end if;
         
@@ -170,7 +170,7 @@ create or replace package body models is
                sc.end_time_0703=sysdate
     where sc.id_calc=v_record.id_calc;
     commit;
-    exception when others then log('0703. Ошибка: '||sqlerrm);
+    exception when others then log('0703. РћС€РёР±РєР°: '||sqlerrm);
   end;
 
   procedure run_0702
@@ -178,7 +178,7 @@ create or replace package body models is
     v_record     model_status_calculates%rowtype; 
   begin
     dbms_application_info.set_module('Aktuar_Models','Run_0702'); 
-    log('0702: Начало работы');   
+    log('0702: РќР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹');   
     select * into v_record
     from model_status_calculates sc 
     where sc.st_0702='E' 
@@ -186,7 +186,7 @@ create or replace package body models is
     and   sc.beg_time_0702 is null;
     
     if v_record.id_calc is null then
-      log('0702: Не найдено задание для расчета');
+      log('0702: РќРµ РЅР°Р№РґРµРЅРѕ Р·Р°РґР°РЅРёРµ РґР»СЏ СЂР°СЃС‡РµС‚Р°');
       return;
     end if;
     
@@ -195,22 +195,22 @@ create or replace package body models is
                sc.beg_time_0702=sysdate
     where sc.id_calc=v_record.id_calc;
     commit;
-    log('0702: Установили статус работы J');   
+    log('0702: РЈСЃС‚Р°РЅРѕРІРёР»Рё СЃС‚Р°С‚СѓСЃ СЂР°Р±РѕС‚С‹ J');   
 
     aktuar_2020.proc_disability_with_mortality(v_record.id_calc, v_record.date_calc);
-    log('0702: Успешно отработала процедура - proc_disability_with_mortality');   
+    log('0702: РЈСЃРїРµС€РЅРѕ РѕС‚СЂР°Р±РѕС‚Р°Р»Р° РїСЂРѕС†РµРґСѓСЂР° - proc_disability_with_mortality');   
 
     aktuar_2020.proc_disability_without_mortality(v_record.id_calc, v_record.date_calc);
-    log('0702: Успешно отработала процедура - proc_disability_without_mortality');
+    log('0702: РЈСЃРїРµС€РЅРѕ РѕС‚СЂР°Р±РѕС‚Р°Р»Р° РїСЂРѕС†РµРґСѓСЂР° - proc_disability_without_mortality');
     
     update model_status_calculates sc  
            set sc.st_0702='R',
                sc.end_time_0702=sysdate
     where sc.id_calc=v_record.id_calc;
     commit;
-    log('0702: Успешно отработал расчет1');
+    log('0702: РЈСЃРїРµС€РЅРѕ РѕС‚СЂР°Р±РѕС‚Р°Р» СЂР°СЃС‡РµС‚1');
 
-    exception when others then log('0702. Ошибка: '||sqlerrm);
+    exception when others then log('0702. РћС€РёР±РєР°: '||sqlerrm);
   end;
 
   procedure run_0701
@@ -262,10 +262,10 @@ create or replace package body models is
         where sc.id_calc=v_record.id_calc;
         commit;
     end loop;
-    exception when others then log('0701. Ошибка: '||sqlerrm);
+    exception when others then log('0701. РћС€РёР±РєР°: '||sqlerrm);
   end;
 
-  -- Стандартный блок
+  -- РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ Р±Р»РѕРє
   procedure run_calculate(iid_calc number)
   is
     v_record     model_status_calculates%rowtype; 
@@ -274,7 +274,7 @@ create or replace package body models is
                       from model_status_calculates sc 
                       where sc.id_calc=iid_calc )
     loop
-        -- Расчет проведен 0705
+        -- Р Р°СЃС‡РµС‚ РїСЂРѕРІРµРґРµРЅ 0705
         if v_record.st_0705='Z' 
         then
             update model_status_calculates sc  

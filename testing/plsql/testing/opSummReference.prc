@@ -17,7 +17,7 @@ begin
         or v_id_kind_testing!=cur.id_kind_testing
         or v_id_category_for_position!=cur.id_category_for_position
       then
-        dbms_output.put_line('π;‘»Œ;'||getPivotTheme(cur.id_organization, cur.id_kind_testing, cur.id_category_for_position));
+        dbms_output.put_line('‚Ññ;–§–ò–û;'||getPivotTheme(cur.id_organization, cur.id_kind_testing, cur.id_category_for_position));
         v_id_organization:=cur.id_organization;
         v_id_kind_testing:=cur.id_kind_testing;
         v_id_category_for_position:=cur.id_category_for_position;

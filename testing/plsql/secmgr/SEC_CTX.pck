@@ -95,7 +95,7 @@ BEGIN
     FROM secmgr.grp g, secmgr.members_group_employee m
     WHERE g.id_group = m.id_group
     and   m.id_emp = v_id_emp
-    and   g.id_type_group=1 -- Сотрудники
+    and   g.id_type_group=1 -- РЎРѕС‚СЂСѓРґРЅРёРєРё
     )
     loop
         v_jobrole:=v_jobrole||Cur.name||';';
@@ -258,11 +258,11 @@ begin
     select code into v_code from test_operator.supp_lang l where l.code=ilang;
   exception when no_data_found then
     begin
-        log('Языковая поддержка для "ilang" отсутствует');
+        log('РЇР·С‹РєРѕРІР°СЏ РїРѕРґРґРµСЂР¶РєР° РґР»СЏ "ilang" РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚');
         return;
     end;
   end;
-  -- Удалим вопорсы на других языках
+  -- РЈРґР°Р»РёРј РІРѕРїРѕСЂСЃС‹ РЅР° РґСЂСѓРіРёС… СЏР·С‹РєР°С…
   delete from TEST_OPERATOR.questions_for_testing qt
   where qt.id_registration=iid_reg and qt.language!=ilang;
   update TEST_OPERATOR.registration r
@@ -308,7 +308,7 @@ begin
             ioperation=>ioperation,
             imodule=>imodule,
             imessage=> imessage||
-            ', Ид регистр.: '||iid_registration );
+            ', РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration );
 --            secmgr.ctl.second_check(iid_registration);
 end log;
 

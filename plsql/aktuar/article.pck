@@ -1,6 +1,6 @@
 create or replace package article is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 20.10.2020 16:44:06
   -- Purpose : test python
   
@@ -17,7 +17,7 @@ create or replace package body article is
   is
   msg varchar2(1000);
   begin
-    msg:='INS Получено: '||ititle || ' : ' || iintro || ' : '||itext;
+    msg:='INS РџРѕР»СѓС‡РµРЅРѕ: '||ititle || ' : ' || iintro || ' : '||itext;
     insert into protocol values(sysdate, msg);
     commit;
     insert into articles(id, title, intro, text, dat) values(seq_article.nextval, ititle, iintro, itext, sysdate);
@@ -28,7 +28,7 @@ create or replace package body article is
   is
   msg varchar2(64);
   begin
-    msg:='DEL Удалена статья : '||iid;
+    msg:='DEL РЈРґР°Р»РµРЅР° СЃС‚Р°С‚СЊСЏ : '||iid;
     insert into protocol values(sysdate, msg);
     commit;
     delete from articles a where a.id = iid;
@@ -39,7 +39,7 @@ create or replace package body article is
   is
   msg varchar2(1000);
   begin
-    msg:='UPD Получено: '||ititle || ' : ' || iintro || ' : '||itext;
+    msg:='UPD РџРѕР»СѓС‡РµРЅРѕ: '||ititle || ' : ' || iintro || ' : '||itext;
     insert into protocol values(sysdate, msg);
     commit;
     update articles a

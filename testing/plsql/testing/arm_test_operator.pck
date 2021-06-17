@@ -1,6 +1,6 @@
 create or replace package arm_test_operator is
 
-  -- Author  : Gusseynov Shamil/Шамиль Гусейнов
+  -- Author  : Gusseynov Shamil/РЁР°РјРёР»СЊ Р“СѓСЃРµР№РЅРѕРІ
   -- Created : 17.01.2012 18:15:12
   -- Purpose :
 
@@ -128,7 +128,7 @@ create or replace package body arm_test_operator is
   into res
   from test_operator.registration r
   where r.id_person=iid_person
-  and r.status not in ('Готов','Неявка');
+  and r.status not in ('Р“РѕС‚РѕРІ','РќРµСЏРІРєР°');
   return res;
  end IsEditablePerson;
  

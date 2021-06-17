@@ -56,16 +56,16 @@ begin
     where lw.ip_addr=iiip_addr;
   exception when no_data_found then
     begin
-        omess:='Подождите, у нас проблемы в сети ...';
+        omess:='РџРѕРґРѕР¶РґРёС‚Рµ, Сѓ РЅР°СЃ РїСЂРѕР±Р»РµРјС‹ РІ СЃРµС‚Рё ...';
         secmgr.sec_ctx.set_userinfo(
                 username=>helper.getfiobyidreg(iid_registration),
                 id_person=>helper.getidpersonbyidreg(iid_registration),
                 iip_addr=>iiip_addr,
                 id_region=>v_id_region );
         secmgr.sec_ctx.log(5, iappname=>'Tester',
-            ioperation=>'Начало тестирования',
+            ioperation=>'РќР°С‡Р°Р»Рѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ',
             imodule=>'beginTest',
-            imessage=> 'Попытка входа с незарегистрированного адреса, Ид регистр.: '||iid_registration );
+            imessage=> 'РџРѕРїС‹С‚РєР° РІС…РѕРґР° СЃ РЅРµР·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅРѕРіРѕ Р°РґСЂРµСЃР°, РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration );
         return;
     end;
   end;
@@ -86,16 +86,16 @@ begin
     update test_operator.registration r
     set r.beg_time_testing=systimestamp,
         r.id_pc=v_id_pc,
-        r.status='Идёт тестирование'
+        r.status='РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ'
     where r.id_registration=iid_registration;
 
     update test_operator.testing t
     set t.last_time_access=systimestamp,
-        t.status='Идёт тестирование'
+        t.status='РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ'
     where t.id_registration=iid_registration;
     secmgr.sec_ctx.log( iDebug=>4,
         iappname=>'Tester',
-        ioperation=>'Начато тестирование',
+        ioperation=>'РќР°С‡Р°С‚Рѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ',
         imodule=>'beginTest',
         imessage=> 'id_regisration: '||iid_registration );
   end if;
@@ -116,7 +116,7 @@ begin
         where lw.ip_addr=iiip_addr;
     exception when no_data_found then
         begin
-            omess:='Подождите, кажется у нас проблемы в сети ...';
+            omess:='РџРѕРґРѕР¶РґРёС‚Рµ, РєР°Р¶РµС‚СЃСЏ Сѓ РЅР°СЃ РїСЂРѕР±Р»РµРјС‹ РІ СЃРµС‚Рё ...';
             secmgr.sec_ctx.set_userinfo(
                 username=>helper.getfiobyidreg(iid_registration),
                 id_person=>helper.getidpersonbyidreg(iid_registration),
@@ -124,9 +124,9 @@ begin
                 id_region=>v_id_region );
             secmgr.sec_ctx.log(iDebug=>5,
                 iappname=>'Tester',
-                ioperation=>'Проверка IP адреса',
+                ioperation=>'РџСЂРѕРІРµСЂРєР° IP Р°РґСЂРµСЃР°',
                 imodule=>'check_Session',
-                imessage=> 'ПОПЫТКА НЕСАНКЦИОНИРОВАННОГО ДОСТУПА с незарегистрированного адреса: '||
+                imessage=> 'РџРћРџР«РўРљРђ РќР•РЎРђРќРљР¦РРћРќРР РћР’РђРќРќРћР“Рћ Р”РћРЎРўРЈРџРђ СЃ РЅРµР·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅРѕРіРѕ Р°РґСЂРµСЃР°: '||
                 iiip_addr||', id_registration: '||iid_registration );
             return;
         end;
@@ -142,26 +142,26 @@ begin
         where r.id_registration=iid_registration;
     exception when no_data_found then
         begin
-            omess:='Подождите, кажется у нас проблемы в сети ...';
+            omess:='РџРѕРґРѕР¶РґРёС‚Рµ, РєР°Р¶РµС‚СЃСЏ Сѓ РЅР°СЃ РїСЂРѕР±Р»РµРјС‹ РІ СЃРµС‚Рё ...';
             secmgr.sec_ctx.log(5, iappname=>'Tester',
-                ioperation=>'Проверка IP адреса',
+                ioperation=>'РџСЂРѕРІРµСЂРєР° IP Р°РґСЂРµСЃР°',
                 imodule=>'check_Session',
-                imessage=> 'ПОПЫТКА НЕСАНКЦИОНИРОВАННОГО ДОСТУПА без регистрации с адреса: '||
+                imessage=> 'РџРћРџР«РўРљРђ РќР•РЎРђРќРљР¦РРћРќРР РћР’РђРќРќРћР“Рћ Р”РћРЎРўРЈРџРђ Р±РµР· СЂРµРіРёСЃС‚СЂР°С†РёРё СЃ Р°РґСЂРµСЃР°: '||
                 iiip_addr||', id_registration: '||iid_registration );
         end;
     end;
 
   if v2_id_pc!=v_id_pc then
-        omess:='Подождите, кажется у нас проблемы в сети ...';
-        secmgr.sec_ctx.log('Tester','Проверка IP адреса','check_Session',
-            'ПОПЫТКА НЕСАНКЦИОНИРОВАННОГО ДОСТУПА с адреса: '||
+        omess:='РџРѕРґРѕР¶РґРёС‚Рµ, РєР°Р¶РµС‚СЃСЏ Сѓ РЅР°СЃ РїСЂРѕР±Р»РµРјС‹ РІ СЃРµС‚Рё ...';
+        secmgr.sec_ctx.log('Tester','РџСЂРѕРІРµСЂРєР° IP Р°РґСЂРµСЃР°','check_Session',
+            'РџРћРџР«РўРљРђ РќР•РЎРђРќРљР¦РРћРќРР РћР’РђРќРќРћР“Рћ Р”РћРЎРўРЈРџРђ СЃ Р°РґСЂРµСЃР°: '||
             iiip_addr||', id_registration: '||iid_registration ||
             helper.getfiobyidreg(iid_registration) );
 
             secmgr.sec_ctx.log(5, iappname=>'Tester',
-                ioperation=>'Проверка IP адреса',
+                ioperation=>'РџСЂРѕРІРµСЂРєР° IP Р°РґСЂРµСЃР°',
                 imodule=>'check_Session',
-                imessage=> 'ПОПЫТКА НЕСАНКЦИОНИРОВАННОГО ДОСТУПА с адреса: '||
+                imessage=> 'РџРћРџР«РўРљРђ РќР•РЎРђРќРљР¦РРћРќРР РћР’РђРќРќРћР“Рћ Р”РћРЎРўРЈРџРђ СЃ Р°РґСЂРµСЃР°: '||
                 iiip_addr||', id_registration: '||iid_registration );
         return;
   end if;
@@ -180,7 +180,7 @@ begin
     and   lw.active='Y'
     and   lw.type_device='C'; -- Computer
     secmgr.sec_ctx.log(0, iappname=>'Tester',
-        ioperation=>'Получение Ид рабочей станции',
+        ioperation=>'РџРѕР»СѓС‡РµРЅРёРµ РРґ СЂР°Р±РѕС‡РµР№ СЃС‚Р°РЅС†РёРё',
         imodule=>'getIdPc',
         imessage=> '' );
     return v_id_pc;
@@ -199,9 +199,9 @@ begin
                  (extract( minute from p2) - extract( minute from p1))*60 +
                   extract( second from p2) - extract( second from p1);
     secmgr.sec_ctx.log(0, iappname=>'Tester',
-        ioperation=>'Расчёт затраченого времени',
+        ioperation=>'Р Р°СЃС‡С‘С‚ Р·Р°С‚СЂР°С‡РµРЅРѕРіРѕ РІСЂРµРјРµРЅРё',
         imodule=>'usedSecond',
-        imessage=> 'Использовано сек.: '||used_second );
+        imessage=> 'РСЃРїРѕР»СЊР·РѕРІР°РЅРѕ СЃРµРє.: '||used_second );
   return used_second;
 end usedSecond;
 
@@ -218,9 +218,9 @@ begin
     where r.id_registration=iid_registration;
 */
     secmgr.sec_ctx.log(0, iappname=>'Tester',
-        ioperation=>'Установка текущей темы',
+        ioperation=>'РЈСЃС‚Р°РЅРѕРІРєР° С‚РµРєСѓС‰РµР№ С‚РµРјС‹',
         imodule=>'setCurrentTheme',
-        imessage=> 'Ид регистр.: '|| iid_registration ||', Ид темы: '|| iid_theme);
+        imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '|| iid_registration ||', РРґ С‚РµРјС‹: '|| iid_theme);
 
     update test_operator.testing ts
     set ts.id_current_theme=iid_theme
@@ -239,9 +239,9 @@ begin
     from test_operator.testing t
     where t.id_registration=iid_registration;
     secmgr.sec_ctx.log(2, iappname=>'Tester',
-        ioperation=>'Получение Ид темы',
+        ioperation=>'РџРѕР»СѓС‡РµРЅРёРµ РРґ С‚РµРјС‹',
         imodule=>'getCurrentTheme',
-        imessage=> 'Ид регистр.: '|| iid_registration ||', Ид темы: '|| v_id_current_theme);
+        imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '|| iid_registration ||', РРґ С‚РµРјС‹: '|| v_id_current_theme);
   return v_id_current_theme;
 end getCurrentTheme;
 
@@ -258,13 +258,13 @@ begin
     from test_operator.themes t
     where t.id_theme=iid_theme;
     secmgr.sec_ctx.log(2, iappname=>'Tester',
-        ioperation=>'Получение названия темы',
+        ioperation=>'РџРѕР»СѓС‡РµРЅРёРµ РЅР°Р·РІР°РЅРёСЏ С‚РµРјС‹',
         imodule=>'getNameTheme',
-        imessage=> 'Ид темы: '|| iid_theme);
+        imessage=> 'РРґ С‚РµРјС‹: '|| iid_theme);
     return v_name_theme;
 end getNameTheme;
 
---Срабатывает при групповых законах
+--РЎСЂР°Р±Р°С‚С‹РІР°РµС‚ РїСЂРё РіСЂСѓРїРїРѕРІС‹С… Р·Р°РєРѕРЅР°С…
 procedure nextTheme( iid_registration in number,
                      oend_theme out char,
                      onew_name_theme out varchar2
@@ -291,7 +291,7 @@ begin
             lead(is_groups) over (order by theme_number, is_groups) next_is_group
     from  test_operator.users_bundle_composition uc
     where uc.id_registration=iid_registration
-    and   uc.status_testing!='Завершён'
+    and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
   )
   where id_theme=v_id_current_theme;
 
@@ -320,15 +320,15 @@ begin
     where t.id_registration=iid_registration;
     commit;
     secmgr.sec_ctx.log(2, iappname=>'Tester',
-        ioperation=>'Переход на новую тему',
+        ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РЅРѕРІСѓСЋ С‚РµРјСѓ',
         imodule=>'nextTheme',
-        imessage=> 'Ид новой темы: '||v_id_next_theme||
-        ', вопросов в теме: '||v_count_question );
+        imessage=> 'РРґ РЅРѕРІРѕР№ С‚РµРјС‹: '||v_id_next_theme||
+        ', РІРѕРїСЂРѕСЃРѕРІ РІ С‚РµРјРµ: '||v_count_question );
   end if;
   exception when no_data_found then null;
 end nextTheme;
 
---Срабатывает при групповых законах
+--РЎСЂР°Р±Р°С‚С‹РІР°РµС‚ РїСЂРё РіСЂСѓРїРїРѕРІС‹С… Р·Р°РєРѕРЅР°С…
 procedure prevTheme( iid_registration in number,
                     oend_theme out char,
                     onew_name_theme out varchar2
@@ -355,7 +355,7 @@ begin
             lag(is_groups) over (order by theme_number, is_groups) next_is_group
     from  test_operator.users_bundle_composition uc
     where uc.id_registration=iid_registration
-    and   uc.status_testing!='Завершён'
+    and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
   )
   where id_theme=v_id_current_theme;
 
@@ -383,10 +383,10 @@ begin
     where t.id_registration=iid_registration;
     commit;
     secmgr.sec_ctx.log(2, iappname=>'Tester',
-        ioperation=>'Переход на предыдущую тему',
+        ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РїСЂРµРґС‹РґСѓС‰СѓСЋ С‚РµРјСѓ',
         imodule=>'prevTheme',
-        imessage=> 'Ид темы: '||v_id_next_theme||
-        ', вопросов в теме: '||v_count_question );
+        imessage=> 'РРґ С‚РµРјС‹: '||v_id_next_theme||
+        ', РІРѕРїСЂРѕСЃРѕРІ РІ С‚РµРјРµ: '||v_count_question );
   end if;
   exception when no_data_found then null;
 end prevTheme;
@@ -405,11 +405,11 @@ begin
   and   qt.id_reply=r.id_reply
   and   r.correctly='Y';
     secmgr.sec_ctx.log(1, iappname=>'Tester',
-        ioperation=>'Расчёт результата по теме',
+        ioperation=>'Р Р°СЃС‡С‘С‚ СЂРµР·СѓР»СЊС‚Р°С‚Р° РїРѕ С‚РµРјРµ',
         imodule=>'calculateResultTheme',
-        imessage=> 'Ид регистр.: '||iid_registration ||
-                    ', Ид темы: '||iid_theme ||
-                    ', Результат: '||counter);
+        imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||
+                    ', РРґ С‚РµРјС‹: '||iid_theme ||
+                    ', Р РµР·СѓР»СЊС‚Р°С‚: '||counter);
   return counter;
 end calculateResultTheme;
 
@@ -425,10 +425,10 @@ begin
   counter:=0;
 --  SECMGR.sec_ctx.log('calculateResult: id_registration: '||iid_registration);
     secmgr.sec_ctx.log(3, iappname=>'Tester',
-        ioperation=>'Расчёт результата по теме',
+        ioperation=>'Р Р°СЃС‡С‘С‚ СЂРµР·СѓР»СЊС‚Р°С‚Р° РїРѕ С‚РµРјРµ',
         imodule=>'calculateResult',
         iid_registration=>iid_registration,
-        imessage=> 'Начало расчета');
+        imessage=> 'РќР°С‡Р°Р»Рѕ СЂР°СЃС‡РµС‚Р°');
         secmgr.ctl.second_check(iid_registration);
 
 
@@ -439,7 +439,7 @@ begin
   loop
       counter:=calculateResultTheme(iid_registration, cur.id_theme);
       all_counter:=all_counter+counter;
-      -- Для энергетиков расчет только по всем темам
+      -- Р”Р»СЏ СЌРЅРµСЂРіРµС‚РёРєРѕРІ СЂР°СЃС‡РµС‚ С‚РѕР»СЊРєРѕ РїРѕ РІСЃРµРј С‚РµРјР°Рј
 --      if counter<cur.count_success
 --      then
 --        is_fail:=true;
@@ -453,11 +453,11 @@ begin
     if is_fail=true
     then
         secmgr.sec_ctx.log(5, iappname=>'Tester',
-            ioperation=>'Тест не пройден',
+            ioperation=>'РўРµСЃС‚ РЅРµ РїСЂРѕР№РґРµРЅ',
             imodule=>'calculateResult',
             imessage=> 'is_Fail=true, id_registration: '||iid_registration);
         update test_operator.registration r
-        set     r.status='Не пройден'
+        set     r.status='РќРµ РїСЂРѕР№РґРµРЅ'
         where   r.id_registration=iid_registration;
     else
         select b.min_point
@@ -468,21 +468,21 @@ begin
         if v_min_point=0 or (v_min_point>0 and all_counter>=v_min_point)
         then
             secmgr.sec_ctx.log(5, iappname=>'Tester',
-                ioperation=>'Тест пройден',
+                ioperation=>'РўРµСЃС‚ РїСЂРѕР№РґРµРЅ',
                 imodule=>'calculateResult',
-                imessage=> 'Ид регистр.: '||iid_registration||
-                        ', Проходной балл: '||v_min_point||', Набрано: '||all_counter);
+                imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', РџСЂРѕС…РѕРґРЅРѕР№ Р±Р°Р»Р»: '||v_min_point||', РќР°Р±СЂР°РЅРѕ: '||all_counter);
             update test_operator.registration r
-            set     r.status='Пройден'
+            set     r.status='РџСЂРѕР№РґРµРЅ'
             where   r.id_registration=iid_registration;
         else
             secmgr.sec_ctx.log(5, iappname=>'Tester',
-                ioperation=>'Тест не пройден',
+                ioperation=>'РўРµСЃС‚ РЅРµ РїСЂРѕР№РґРµРЅ',
                 imodule=>'calculateResult',
-                imessage=> 'is_Fail=false. Ид регистр.: '||iid_registration||
-                        ', Проходной балл: '||v_min_point||', Набрано: '||all_counter);
+                imessage=> 'is_Fail=false. РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', РџСЂРѕС…РѕРґРЅРѕР№ Р±Р°Р»Р»: '||v_min_point||', РќР°Р±СЂР°РЅРѕ: '||all_counter);
             update test_operator.registration r
-            set     r.status='Не пройден'
+            set     r.status='РќРµ РїСЂРѕР№РґРµРЅ'
             where   r.id_registration=iid_registration;
         end if;
     end if;
@@ -516,7 +516,7 @@ begin
     and     t.id_registration=uc.id_registration
 --    and     t.current_theme_number=uc.theme_number
     and     t.id_current_theme=uc.id_theme;
--- Не групповые тестовые задания
+-- РќРµ РіСЂСѓРїРїРѕРІС‹Рµ С‚РµСЃС‚РѕРІС‹Рµ Р·Р°РґР°РЅРёСЏ
     if v_question_count=v_current_question_num and v_id_param is null
     then
         status:='Y';
@@ -530,7 +530,7 @@ begin
         loop
             if v_first_num=0 then
                 v_first_num:=cur.order_num_question;
-                omess:='Не отмечены вопросы: №'||cur.order_num_question;
+                omess:='РќРµ РѕС‚РјРµС‡РµРЅС‹ РІРѕРїСЂРѕСЃС‹: в„–'||cur.order_num_question;
                 update test_operator.testing t
                 set     t.current_question_num=cur.order_num_question
                 where t.id_registration=iid_registration;
@@ -538,12 +538,12 @@ begin
             else
                 if length(omess)<len_omess
                 then
-                   omess:=omess||', №'||cur.order_num_question;
+                   omess:=omess||', в„–'||cur.order_num_question;
                 end if;
             end if;
         end loop;
     end if;
--- Групповые тестовые задания
+-- Р“СЂСѓРїРїРѕРІС‹Рµ С‚РµСЃС‚РѕРІС‹Рµ Р·Р°РґР°РЅРёСЏ
     v_name_theme:='';
     if v_question_count=v_current_question_num and v_id_param is not null
     then
@@ -566,7 +566,7 @@ begin
         loop
             if v_name_theme is null or v_name_theme!=exclude_sharp(cur.descr) then
                 if v_name_theme is null then
-                    omess:='Имеются неотмеченные вопросы по темам: <br><b>'||exclude_sharp(cur.descr)||'</b>:';
+                    omess:='РРјРµСЋС‚СЃСЏ РЅРµРѕС‚РјРµС‡РµРЅРЅС‹Рµ РІРѕРїСЂРѕСЃС‹ РїРѕ С‚РµРјР°Рј: <br><b>'||exclude_sharp(cur.descr)||'</b>:';
                 else
                     if length(omess)<len_omess
                     then
@@ -585,11 +585,11 @@ begin
                 where t.id_registration=iid_registration;
                 commit;
             end if;
-            omess:=omess||'  №'||cur.order_num_question;
+            omess:=omess||'  в„–'||cur.order_num_question;
         end loop;
     end if;
     secmgr.sec_ctx.log(3, iappname=>'Tester',
-        ioperation=>'Проверка пропущенных ответов',
+        ioperation=>'РџСЂРѕРІРµСЂРєР° РїСЂРѕРїСѓС‰РµРЅРЅС‹С… РѕС‚РІРµС‚РѕРІ',
         imodule=>'checkEndTheme',
         imessage=> rtrim(substr(omess,1,256) ));
 end checkEndTheme;
@@ -611,22 +611,22 @@ begin
 
   if v_is_group='N' then
     update test_operator.users_bundle_composition uc
-    set    uc.status_testing='Завершён'
+    set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
     where   uc.id_registration=iid_registration
     and     uc.id_theme=v_id_theme;
   else
     update test_operator.users_bundle_composition uc
-    set    uc.status_testing='Завершён'
+    set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
     where   uc.id_registration=iid_registration
     and     v_is_group='Y';
   end if;
   commit;
   secmgr.sec_ctx.log(iDebug=>3,
             iappname=>'Tester',
-            ioperation=>'Переход на новую тему',
+            ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РЅРѕРІСѓСЋ С‚РµРјСѓ',
             imodule=>'endTheme',
-            imessage=> 'Завершена тема. Ид регистр.: '||iid_registration||
-                    ', Ид темы: '||v_id_theme
+            imessage=> 'Р—Р°РІРµСЂС€РµРЅР° С‚РµРјР°. РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                    ', РРґ С‚РµРјС‹: '||v_id_theme
              );
   begin
     select t.next_id, t.count_question
@@ -635,7 +635,7 @@ begin
       select uc.id_theme as next_id, uc.count_question
       from  test_operator.users_bundle_composition uc
       where uc.id_registration=iid_registration
-      and   uc.status_testing!='Завершён'
+      and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
       order by uc.theme_number
     ) t
     where rownum=1;
@@ -643,11 +643,11 @@ begin
       begin
         secmgr.sec_ctx.log(iDebug=>3,
             iappname=>'Tester',
-            ioperation=>'Переход на новую тему',
+            ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РЅРѕРІСѓСЋ С‚РµРјСѓ',
             imodule=>'endTheme',
-            imessage=> 'Тестирование завершено.'||
-            ', Ид регистр.: '||iid_registration ||
-            ', Ид темы: '||v_id_theme
+            imessage=> 'РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ.'||
+            ', РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||
+            ', РРґ С‚РµРјС‹: '||v_id_theme
             );
 
         oname_theme:='';
@@ -656,7 +656,7 @@ begin
         where r.id_registration=iid_registration;
 
         update test_operator.testing t
-        set   t.status='Тестирование завершено'
+        set   t.status='РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ'
         where t.id_registration=iid_registration;
 
         calculateResult(iid_registration);
@@ -665,12 +665,12 @@ begin
   end;
   secmgr.sec_ctx.log(iDebug=>1,
         iappname=>'Tester',
-         ioperation=>'Переход на новую тему',
+         ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РЅРѕРІСѓСЋ С‚РµРјСѓ',
          imodule=>'endTheme',
-         imessage=> 'Новая тема. '||
-         'Ид регистр.: '||iid_registration ||
-         ', Ид темы: '||v_id_next_theme||
-         ', Всего вопросов: '||v_count_question );
+         imessage=> 'РќРѕРІР°СЏ С‚РµРјР°. '||
+         'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||
+         ', РРґ С‚РµРјС‹: '||v_id_next_theme||
+         ', Р’СЃРµРіРѕ РІРѕРїСЂРѕСЃРѕРІ: '||v_count_question );
   select
        case when sys_context('sec_ctx','language') in ('kk','kz')
             then tm.descr_kaz
@@ -710,16 +710,16 @@ begin
 
     secmgr.sec_ctx.log(iDebug=>1,
             iappname=>'Tester',
-            ioperation=>'Переход на новый вопрос',
+            ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РЅРѕРІС‹Р№ РІРѕРїСЂРѕСЃ',
             imodule=>'nextQuestion',
-            imessage=> 'Ид регистр.: '||iid_registration ||', '||
-            'Ид темы: '||Iid_theme||
-             ', Всего вопросов: '||v_all_question||', номер вопроса: '||iorder_num||
-             ', Остаток времени: '||itime_remain );
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||', '||
+            'РРґ С‚РµРјС‹: '||Iid_theme||
+             ', Р’СЃРµРіРѕ РІРѕРїСЂРѕСЃРѕРІ: '||v_all_question||', РЅРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||iorder_num||
+             ', РћСЃС‚Р°С‚РѕРє РІСЂРµРјРµРЅРё: '||itime_remain );
 
     if( v_all_question>iorder_num and itime_remain>0 )
     then
-/* 22.08.2013 Гусейнов
+/* 22.08.2013 Р“СѓСЃРµР№РЅРѕРІ
       update test_operator.users_bundle_composition u
       set u.order_num=iorder_num+1
       where u.id_registration=iid_registration
@@ -750,15 +750,15 @@ is
 v_end_theme char;
 v_is_group  char;
 begin
-    v_end_theme:='N'; -- Тему менять не надо
+    v_end_theme:='N'; -- РўРµРјСѓ РјРµРЅСЏС‚СЊ РЅРµ РЅР°РґРѕ
     secmgr.sec_ctx.log( iDebug=>1,
             iappname=>'Tester',
-            ioperation=>'Переход на предыдущий вопрос',
+            ioperation=>'РџРµСЂРµС…РѕРґ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ РІРѕРїСЂРѕСЃ',
             imodule=>'prevQuestion',
-            imessage=> 'Ид регистр.: '||iid_registration ||', '||
-            'Ид темы: '||Iid_theme||
-            ', номер вопроса: '||iorder_num||
-            ', Остаток времени: '||itime_remain );
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||', '||
+            'РРґ С‚РµРјС‹: '||Iid_theme||
+            ', РЅРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||iorder_num||
+            ', РћСЃС‚Р°С‚РѕРє РІСЂРµРјРµРЅРё: '||itime_remain );
 
     if iorder_num>1 and itime_remain>0 then
       update test_operator.users_bundle_composition u
@@ -802,7 +802,7 @@ begin
   where t.id_registration = iid_registration
   and rownum=1;
 
--- Сколько уже использовано времени на вопросы, кроме последнего
+-- РЎРєРѕР»СЊРєРѕ СѓР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРѕ РІСЂРµРјРµРЅРё РЅР° РІРѕРїСЂРѕСЃС‹, РєСЂРѕРјРµ РїРѕСЃР»РµРґРЅРµРіРѕ
   select ub.is_groups,
          case when ub.is_groups='Y'
               then ( select bc.used_time
@@ -851,12 +851,12 @@ begin
   otime_remain:=v_period_for_testing-v_used;
     secmgr.sec_ctx.log( iDebug=>1,
             iappname=>'Tester',
-            ioperation=>'Расчет использованного времени',
+            ioperation=>'Р Р°СЃС‡РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅРѕРіРѕ РІСЂРµРјРµРЅРё',
             imodule=>'recalcUsedTime',
-            imessage=> 'Ид регистр.: '||iid_registration ||
-            ', Ид темы: '||v_id_current_theme ||
-            ', Использовано: '||v_used ||
-            ', Осталось: '||otime_remain );
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||
+            ', РРґ С‚РµРјС‹: '||v_id_current_theme ||
+            ', РСЃРїРѕР»СЊР·РѕРІР°РЅРѕ: '||v_used ||
+            ', РћСЃС‚Р°Р»РѕСЃСЊ: '||otime_remain );
 end;
 
 procedure save_answer
@@ -882,12 +882,12 @@ begin
   recalcUsedTime( iid_registration, v_id_current_theme, v_order_num, v_time_remain );
   secmgr.sec_ctx.log( iDebug=>2,
             iappname=>'Tester',
-            ioperation=>'Сохранение ответа',
+            ioperation=>'РЎРѕС…СЂР°РЅРµРЅРёРµ РѕС‚РІРµС‚Р°',
             imodule=>'save_answer',
-            imessage=> 'Ид регистр: '||iid_registration ||
-            ', Направление: '||idirection||
-            ', Ид ответа: '||iid_reply||
-            ', Номер вопроса: '||v_order_num );
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ: '||iid_registration ||
+            ', РќР°РїСЂР°РІР»РµРЅРёРµ: '||idirection||
+            ', РРґ РѕС‚РІРµС‚Р°: '||iid_reply||
+            ', РќРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||v_order_num );
   if iid_reply is not null
   then
     update test_operator.questions_for_testing q
@@ -898,7 +898,7 @@ begin
     and q.order_num_question=v_order_num;
   end if;
 
---/* Убрать после выяснения причины ошибки
+--/* РЈР±СЂР°С‚СЊ РїРѕСЃР»Рµ РІС‹СЏСЃРЅРµРЅРёСЏ РїСЂРёС‡РёРЅС‹ РѕС€РёР±РєРё
     select count(q.id_reply)
     into counter
     from test_operator.questions_for_testing q
@@ -907,14 +907,14 @@ begin
     if counter>1 then
       secmgr.sec_ctx.log( iDebug=>5,
                 iappname=>'Tester',
-                ioperation=>'Сохранение ответа',
+                ioperation=>'РЎРѕС…СЂР°РЅРµРЅРёРµ РѕС‚РІРµС‚Р°',
                 imodule=>'save_answer',
-                imessage=> 'Дублирование ответов! Ид регистр. '||iid_registration ||
-                ', Ид темы: '||v_id_current_theme||
-                ', Номер вопроса: '||v_order_num||
-                ', Ид ответа: '||iid_reply );
+                imessage=> 'Р”СѓР±Р»РёСЂРѕРІР°РЅРёРµ РѕС‚РІРµС‚РѕРІ! РРґ СЂРµРіРёСЃС‚СЂ. '||iid_registration ||
+                ', РРґ С‚РµРјС‹: '||v_id_current_theme||
+                ', РќРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||v_order_num||
+                ', РРґ РѕС‚РІРµС‚Р°: '||iid_reply );
         rollback;
-        raise_application_error(-2000, 'Дублирование ОТВЕТОВ!!<BR>Пригласите Адиля!');
+        raise_application_error(-2000, 'Р”СѓР±Р»РёСЂРѕРІР°РЅРёРµ РћРўР’Р•РўРћР’!!<BR>РџСЂРёРіР»Р°СЃРёС‚Рµ РђРґРёР»СЏ!');
     end if;
 --*/
 
@@ -947,13 +947,13 @@ begin
 --/*
   secmgr.sec_ctx.log( iDebug=>2,
             iappname=>'Tester',
-            ioperation=>'Сохранение ответа',
+            ioperation=>'РЎРѕС…СЂР°РЅРµРЅРёРµ РѕС‚РІРµС‚Р°',
             imodule=>'save_answer',
-            imessage=> 'Ответ сохранен. Ид регистр: '||iid_registration ||
-            ', Ид темы: '||v_id_current_theme||
-            ', Направление: '||idirection||
-            ', Ид ответа: '||iid_reply||
-            ', Номер вопроса: '||v_order_num||', Сообщение: '||substr(oend_theme,1,64)
+            imessage=> 'РћС‚РІРµС‚ СЃРѕС…СЂР°РЅРµРЅ. РРґ СЂРµРіРёСЃС‚СЂ: '||iid_registration ||
+            ', РРґ С‚РµРјС‹: '||v_id_current_theme||
+            ', РќР°РїСЂР°РІР»РµРЅРёРµ: '||idirection||
+            ', РРґ РѕС‚РІРµС‚Р°: '||iid_reply||
+            ', РќРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||v_order_num||', РЎРѕРѕР±С‰РµРЅРёРµ: '||substr(oend_theme,1,64)
              );
 --*/
 end save_answer;
@@ -1026,7 +1026,7 @@ if v_period_for_testing <= coalesce(v_used_time,0)
 then
   oremain_time:=0;
   update test_operator.users_bundle_composition uc
-  set    uc.status_testing='Завершён'
+  set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
   where  uc.id_registration=iid_registration
   and    uc.id_theme=v_id_current_theme;
 end if;
@@ -1038,12 +1038,12 @@ where t.id_registration=iid_registration;
 oused_time:=v_used_time;
   secmgr.sec_ctx.log( iDebug=>1,
             iappname=>'Tester',
-            ioperation=>'Возврат текущего вопроса',
+            ioperation=>'Р’РѕР·РІСЂР°С‚ С‚РµРєСѓС‰РµРіРѕ РІРѕРїСЂРѕСЃР°',
             imodule=>'getQuestion',
-            imessage=> 'Ответ передан. Ид регистр: '||iid_registration ||
-            ', Тема: '||v_id_current_theme||
-            ', Номер вопроса: '||oorder_num ||
-            ', Ид ответа: '||oid_reply );
+            imessage=> 'РћС‚РІРµС‚ РїРµСЂРµРґР°РЅ. РРґ СЂРµРіРёСЃС‚СЂ: '||iid_registration ||
+            ', РўРµРјР°: '||v_id_current_theme||
+            ', РќРѕРјРµСЂ РІРѕРїСЂРѕСЃР°: '||oorder_num ||
+            ', РРґ РѕС‚РІРµС‚Р°: '||oid_reply );
 
 exception when no_data_found then null;
 end getQuestion;
@@ -1069,9 +1069,9 @@ begin
 --  select * from test_operator.registration r;
   helper.getFIOByIIN(ilogin,omess);
   if omess is null then
-     omess:='Кандидат c ИИН '||ilogin||' в системе отсутствует';
+     omess:='РљР°РЅРґРёРґР°С‚ c РРРќ '||ilogin||' РІ СЃРёСЃС‚РµРјРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚';
      secmgr.sec_ctx.log(iDebug=>3, iappname=>'Tester',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'login',
             imessage=> omess );
      return;
@@ -1095,14 +1095,14 @@ begin
         and
         trunc(sysdate) <= trunc(r.end_day_testing)
       )
-      and r.status in ('Готов','Идёт тестирование', 'Тестирование начато')
+      and r.status in ('Р“РѕС‚РѕРІ','РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ', 'РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅР°С‡Р°С‚Рѕ')
       order by r.date_testing desc
     ) where rownum=1;
   exception when no_data_found then
     olang:= case when olang is null then 'ru' else olang end;
-    omess:='Для '||ilogin||' тестирование не назначено';
+    omess:='Р”Р»СЏ '||ilogin||' С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅРµ РЅР°Р·РЅР°С‡РµРЅРѕ';
     secmgr.sec_ctx.log(iDebug=>4, iappname=>'Tester',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'login',
             imessage=> omess );
     return;
@@ -1119,9 +1119,9 @@ begin
   secmgr.sec_ctx.set_language(olang);
 --
   if ipasswd!=v_passwd then
-    omess:='Введён неверный пароль';
+    omess:='Р’РІРµРґС‘РЅ РЅРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ';
      secmgr.sec_ctx.log(iDebug=>3, iappname=>'Tester',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'login',
             imessage=> omess );
     return;
@@ -1131,14 +1131,14 @@ begin
   if v_id_pc>0
   then
     update test_operator.registration r
-    set r.status='Тестирование начато',
+    set r.status='РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅР°С‡Р°С‚Рѕ',
         r.id_pc=v_id_pc
     where r.id_registration=v_id_registration;
   else
-    omess:='Попытка начать тестирование с неразрешённого адреса '||iip_addr;
+    omess:='РџРѕРїС‹С‚РєР° РЅР°С‡Р°С‚СЊ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ СЃ РЅРµСЂР°Р·СЂРµС€С‘РЅРЅРѕРіРѕ Р°РґСЂРµСЃР° '||iip_addr;
     secmgr.sec_ctx.log(iDebug=>5,
             iappname=>'Tester',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'login',
             imessage=> omess);
     return;
@@ -1146,9 +1146,9 @@ begin
 --*/
    secmgr.sec_ctx.log(iDebug=>4,
             iappname=>'Tester',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'login',
-            imessage=> 'Тестирование начато');
+            imessage=> 'РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅР°С‡Р°С‚Рѕ');
   commit;
 
   oid_registration:=v_id_registration;
@@ -1178,15 +1178,15 @@ begin
  where r.id_bundle=b.id_bundle
  and   r.id_registration=iid_registration;
 
- --Для энергетиков удаляем в хвосте коды категорий
+ --Р”Р»СЏ СЌРЅРµСЂРіРµС‚РёРєРѕРІ СѓРґР°Р»СЏРµРј РІ С…РІРѕСЃС‚Рµ РєРѕРґС‹ РєР°С‚РµРіРѕСЂРёР№
   ocategory:=v_descr;
 -- ocategory:=helper.exclude_sharp(v_descr);
 
  secmgr.sec_ctx.log(iDebug=>1,
             iappname=>'Tester',
-            ioperation=>'Поиск категории теста',
+            ioperation=>'РџРѕРёСЃРє РєР°С‚РµРіРѕСЂРёРё С‚РµСЃС‚Р°',
             imodule=>'getInfo',
-            imessage=> 'Категория: '||ocategory);
+            imessage=> 'РљР°С‚РµРіРѕСЂРёСЏ: '||ocategory);
 end getInfo;
 
 function gotoThemeByNumber(iid_registration in number, inumber_theme in number, inumber_question in number)

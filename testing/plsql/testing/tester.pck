@@ -51,12 +51,12 @@ begin
   then
     update test_operator.registration r
     set r.beg_time_testing=systimestamp,
-        r.status='Идёт тестирование'
+        r.status='РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ'
     where r.id_registration=iid_registration;
 
     update test_operator.testing t
     set t.beg_time_testing=systimestamp,
-        t.status_testing='Идёт тестирование'
+        t.status_testing='РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ'
     where t.id_registration=iid_registration;
   end if;
   commit;
@@ -169,7 +169,7 @@ begin
             lead(is_groups) over (order by theme_number, is_groups) next_is_group
     from  test_operator.users_bundle_composition uc
     where uc.id_registration=iid_registration
-    and   uc.status_testing!='Завершён'
+    and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
   )
   where id_theme=v_id_current_theme;
 
@@ -217,7 +217,7 @@ begin
             lag(is_groups) over (order by theme_number, is_groups) next_is_group    
     from  test_operator.users_bundle_composition uc
     where uc.id_registration=iid_registration
-    and   uc.status_testing!='Завершён'
+    and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
   )
   where id_theme=v_id_current_theme;
 
@@ -282,11 +282,11 @@ begin
   if is_fail=true
   then
     update test_operator.registration r
-    set     r.status='Не пройден'
+    set     r.status='РќРµ РїСЂРѕР№РґРµРЅ'
     where   r.id_registration=iid_registration;
   else
     update test_operator.registration r
-    set     r.status='Пройден'
+    set     r.status='РџСЂРѕР№РґРµРЅ'
     where   r.id_registration=iid_registration;
   end if;
   commit;  
@@ -309,12 +309,12 @@ begin
 
   if v_is_group='N' then
     update test_operator.users_bundle_composition uc
-    set    uc.status_testing='Завершён'
+    set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
     where   uc.id_registration=iid_registration
     and     uc.id_theme=v_id_theme;
   else 
     update test_operator.users_bundle_composition uc
-    set    uc.status_testing='Завершён'
+    set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
     where   uc.id_registration=iid_registration
     and     v_is_group='Y';
   end if;
@@ -327,7 +327,7 @@ begin
       select uc.id_theme as next_id
       from  test_operator.users_bundle_composition uc
       where uc.id_registration=iid_registration
-      and   uc.status_testing!='Завершён'
+      and   uc.status_testing!='Р—Р°РІРµСЂС€С‘РЅ'
       order by uc.theme_number
     ) t
     where rownum=1;
@@ -340,7 +340,7 @@ begin
         where r.id_registration=iid_registration;
 
         update test_operator.testing t
-        set   t.status_testing='Тестирование завершено'
+        set   t.status_testing='РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ'
         where t.id_registration=iid_registration;
 
         calculateResult(iid_registration);
@@ -413,7 +413,7 @@ is
 v_end_theme char;
 v_is_group  char;
 begin
-    v_end_theme:='N'; -- Тему менять не надо
+    v_end_theme:='N'; -- РўРµРјСѓ РјРµРЅСЏС‚СЊ РЅРµ РЅР°РґРѕ
     if iorder_num>1 and itime_remain>0 then
       update test_operator.users_bundle_composition u
       set u.order_num=iorder_num-1
@@ -450,7 +450,7 @@ begin
   from test_operator.testing t
   where t.id_registration = iid_registration
   and rownum=1;
--- Сколько уже использовано времени на вопросы, кроме последнего
+-- РЎРєРѕР»СЊРєРѕ СѓР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРѕ РІСЂРµРјРµРЅРё РЅР° РІРѕРїСЂРѕСЃС‹, РєСЂРѕРјРµ РїРѕСЃР»РµРґРЅРµРіРѕ
   select ub.order_num, ub.is_groups,
          case when ub.is_groups='Y' 
               then ( select bc.used_time
@@ -471,7 +471,7 @@ begin
   from TEST_OPERATOR.users_bundle_composition ub
   where ub.id_registration = iid_registration
   and   ub.id_theme=v_id_current_theme;
--- Сколько использовано времени на последний вопрос
+-- РЎРєРѕР»СЊРєРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРѕ РІСЂРµРјРµРЅРё РЅР° РїРѕСЃР»РµРґРЅРёР№ РІРѕРїСЂРѕСЃ
   select systimestamp into v_current_time_stamp from dual;
   v_used_second:= usedSecond(v_last_time_access, v_current_time_stamp);
   v_used:=v_used_second+v_used_time;
@@ -479,7 +479,7 @@ begin
   then
     v_used:=v_period_for_testing;
   end if;
--- Обновим использованное время
+-- РћР±РЅРѕРІРёРј РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅРѕРµ РІСЂРµРјСЏ
   if v_is_group='N' 
   then
     update TEST_OPERATOR.users_bundle_composition ub
@@ -517,7 +517,7 @@ begin
   sec_ctx.log('save answer start. idirection: '||idirection||', iid_registration: '||iid_registration);
   recalcUsedTime( iid_registration, v_id_current_theme, v_order_num, v_time_remain );
 --  sec_ctx.log('recalcUsedTime executed: '||v_id_current_theme||', v_order_num: '||v_order_num);
--- Сохраняем ответ
+-- РЎРѕС…СЂР°РЅСЏРµРј РѕС‚РІРµС‚
   if iid_reply is not null
   then
     update questions_for_testing q
@@ -610,7 +610,7 @@ if v_period_for_testing <= coalesce(v_used_time,0)
 then 
   oremain_time:=0;
   update test_operator.users_bundle_composition uc
-  set    uc.status_testing='Завершён'
+  set    uc.status_testing='Р—Р°РІРµСЂС€С‘РЅ'
   where  uc.id_registration=iid_registration
   and    uc.id_theme=v_id_current_theme;
 end if;
@@ -658,11 +658,11 @@ begin
         and
         trunc(sysdate) <= trunc(r.end_day_testing)
       )
---      and r.status in ('Готов','Идёт тестирование')
+--      and r.status in ('Р“РѕС‚РѕРІ','РРґС‘С‚ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ')
       order by r.date_testing desc
     ) where rownum=1;
   exception when no_data_found then
-    omess:='Для '||ilogin||' тестирование не назначено';
+    omess:='Р”Р»СЏ '||ilogin||' С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅРµ РЅР°Р·РЅР°С‡РµРЅРѕ';
     secmgr.sec_ctx.log(omess);
     return;
   end;
@@ -670,7 +670,7 @@ begin
   sec_ctx.set_language(olang);
   
   if ipasswd!=v_passwd then
-    omess:='Для '||ilogin||' введён неверный пароль';
+    omess:='Р”Р»СЏ '||ilogin||' РІРІРµРґС‘РЅ РЅРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ';
     secmgr.sec_ctx.log(omess);
     return;
   end if;
@@ -679,11 +679,11 @@ begin
   if v_id_pc>0
   then
     update test_operator.registration r
-    set r.status='Тестирование начато',
+    set r.status='РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅР°С‡Р°С‚Рѕ',
         r.id_pc=v_id_pc
     where r.id_registration=v_id_registration;
   else
-    omess:='Попытка начать тестировния с неразрешённого адреса '||iip_addr;
+    omess:='РџРѕРїС‹С‚РєР° РЅР°С‡Р°С‚СЊ С‚РµСЃС‚РёСЂРѕРІРЅРёСЏ СЃ РЅРµСЂР°Р·СЂРµС€С‘РЅРЅРѕРіРѕ Р°РґСЂРµСЃР° '||iip_addr;
     secmgr.sec_ctx.log(omess);
     return;
   end if;  

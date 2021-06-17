@@ -19,7 +19,7 @@ create or replace package body load_tables_list Is
     Set t.beg_time = Sysdate,
         t.end_time = '',
         t.state = 1,
-        t.info = 'Начата обработка'
+        t.info = 'РќР°С‡Р°С‚Р° РѕР±СЂР°Р±РѕС‚РєР°'
     Where t.rowid = irowid;
     Commit;
 
@@ -66,20 +66,20 @@ create or replace package body load_tables_list Is
     For i In (Select t.rowid rwd, t.*
               From load_tables_status t
               Where to_char(coalesce(t.runtime,trunc(sysdate)), 'HH24:MI')<to_char(sysdate, 'HH24:MI')
-              and coalesce(t.runtime, sysdate) <= sysdate -- Если дата загрузки наступила
-              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- Прошедшие Месяцы не учитывать
-              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Если сегодня загружали, то больше не надо
+              and coalesce(t.runtime, sysdate) <= sysdate -- Р•СЃР»Рё РґР°С‚Р° Р·Р°РіСЂСѓР·РєРё РЅР°СЃС‚СѓРїРёР»Р°
+              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- РџСЂРѕС€РµРґС€РёРµ РњРµСЃСЏС†С‹ РЅРµ СѓС‡РёС‚С‹РІР°С‚СЊ
+              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Р•СЃР»Рё СЃРµРіРѕРґРЅСЏ Р·Р°РіСЂСѓР¶Р°Р»Рё, С‚Рѕ Р±РѕР»СЊС€Рµ РЅРµ РЅР°РґРѕ
               and state < 3
               and coalesce(stream,1) = 1  -- LIST_1
-              and   0 = ( select count(t2.beg_time)      -- Если задачи уже запущены - ничего не делать
+              and   0 = ( select count(t2.beg_time)      -- Р•СЃР»Рё Р·Р°РґР°С‡Рё СѓР¶Рµ Р·Р°РїСѓС‰РµРЅС‹ - РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°С‚СЊ
                           from load_tables_status t2
                           where trunc(t2.beg_time,'MM')=trunc(sysdate,'MM')
                           and coalesce(stream,1) = 1
                           and state=1
                         )
-              and sysdate > trunc(sysdate,'Y')+4            -- Исключить первые 4 дня Нового Года
-                 -- Ограничения на работу по дням недели
-              and to_char(sysdate,'D') in ('1', '2','3','4','5') -- Работать всегда в рабочие дни
+              and sysdate > trunc(sysdate,'Y')+4            -- РСЃРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Рµ 4 РґРЅСЏ РќРѕРІРѕРіРѕ Р“РѕРґР°
+                 -- РћРіСЂР°РЅРёС‡РµРЅРёСЏ РЅР° СЂР°Р±РѕС‚Сѓ РїРѕ РґРЅСЏРј РЅРµРґРµР»Рё
+              and to_char(sysdate,'D') in ('1', '2','3','4','5') -- Р Р°Р±РѕС‚Р°С‚СЊ РІСЃРµРіРґР° РІ СЂР°Р±РѕС‡РёРµ РґРЅРё
               Order By t.priority desc
          )
     Loop
@@ -92,20 +92,20 @@ create or replace package body load_tables_list Is
     For i In (Select t.rowid rwd, t.*
               From load_tables_status t
               Where to_char(coalesce(t.runtime,trunc(sysdate)), 'HH24:MI')<to_char(sysdate, 'HH24:MI')
-              and coalesce(t.runtime, sysdate) <= sysdate -- Если дата загрузки наступила
-              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- Прошедшие Месяцы не учитывать
-              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Если сегодня загружали, то больше не надо
+              and coalesce(t.runtime, sysdate) <= sysdate -- Р•СЃР»Рё РґР°С‚Р° Р·Р°РіСЂСѓР·РєРё РЅР°СЃС‚СѓРїРёР»Р°
+              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- РџСЂРѕС€РµРґС€РёРµ РњРµСЃСЏС†С‹ РЅРµ СѓС‡РёС‚С‹РІР°С‚СЊ
+              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Р•СЃР»Рё СЃРµРіРѕРґРЅСЏ Р·Р°РіСЂСѓР¶Р°Р»Рё, С‚Рѕ Р±РѕР»СЊС€Рµ РЅРµ РЅР°РґРѕ
               and state < 3
               and coalesce(stream,1) = 2  -- LIST_2
-              and   0 = ( select count(t2.beg_time)      -- Если задачи уже запущены - ничего не делать
+              and   0 = ( select count(t2.beg_time)      -- Р•СЃР»Рё Р·Р°РґР°С‡Рё СѓР¶Рµ Р·Р°РїСѓС‰РµРЅС‹ - РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°С‚СЊ
                           from load_tables_status t2
                           where trunc(t2.beg_time,'MM')=trunc(sysdate,'MM')
                           and coalesce(stream,1) = 2
                           and state=1
                         )
-              and sysdate > trunc(sysdate,'Y')+4            -- Исключить первые 4 дня Нового Года
-                 -- Ограничения на работу по дням недели
-              and to_char(sysdate,'D') in ('1', '2','3','4','5','6') -- Работать всегда в рабочие дни
+              and sysdate > trunc(sysdate,'Y')+4            -- РСЃРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Рµ 4 РґРЅСЏ РќРѕРІРѕРіРѕ Р“РѕРґР°
+                 -- РћРіСЂР°РЅРёС‡РµРЅРёСЏ РЅР° СЂР°Р±РѕС‚Сѓ РїРѕ РґРЅСЏРј РЅРµРґРµР»Рё
+              and to_char(sysdate,'D') in ('1', '2','3','4','5','6') -- Р Р°Р±РѕС‚Р°С‚СЊ РІСЃРµРіРґР° РІ СЂР°Р±РѕС‡РёРµ РґРЅРё
               Order By t.priority desc
          )
     Loop
@@ -118,20 +118,20 @@ create or replace package body load_tables_list Is
     For i In (Select t.rowid rwd, t.*
               From load_tables_status t
               Where to_char(coalesce(t.runtime,trunc(sysdate)), 'HH24:MI')<to_char(sysdate, 'HH24:MI')
-              and coalesce(t.runtime, sysdate) <= sysdate -- Если дата загрузки наступила
-              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- Прошедшие Месяцы не учитывать
-              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Если сегодня загружали, то больше не надо
+              and coalesce(t.runtime, sysdate) <= sysdate -- Р•СЃР»Рё РґР°С‚Р° Р·Р°РіСЂСѓР·РєРё РЅР°СЃС‚СѓРїРёР»Р°
+              and trunc(runtime,'DD') >= trunc(sysdate,'MM') -- РџСЂРѕС€РµРґС€РёРµ РњРµСЃСЏС†С‹ РЅРµ СѓС‡РёС‚С‹РІР°С‚СЊ
+              and trunc(coalesce(t.last_success_date, sysdate-1),'DD')<trunc(sysdate,'DD') -- Р•СЃР»Рё СЃРµРіРѕРґРЅСЏ Р·Р°РіСЂСѓР¶Р°Р»Рё, С‚Рѕ Р±РѕР»СЊС€Рµ РЅРµ РЅР°РґРѕ
               and state < 3
               and coalesce(stream,1) = 3  -- LIST_3
-              and   0 = ( select count(t2.beg_time)      -- Если задачи уже запущены - ничего не делать
+              and   0 = ( select count(t2.beg_time)      -- Р•СЃР»Рё Р·Р°РґР°С‡Рё СѓР¶Рµ Р·Р°РїСѓС‰РµРЅС‹ - РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°С‚СЊ
                           from load_tables_status t2
                           where trunc(t2.beg_time,'MM')=trunc(sysdate,'MM')
                           and coalesce(stream,1) = 3
                           and state=1
                         )
-              and sysdate > trunc(sysdate,'Y')+4            -- Исключить первые 4 дня Нового Года
-                 -- Ограничения на работу по дням недели
-              and to_char(sysdate,'D') in ('1', '2','3','4','5','7') -- Работать всегда в рабочие дни
+              and sysdate > trunc(sysdate,'Y')+4            -- РСЃРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Рµ 4 РґРЅСЏ РќРѕРІРѕРіРѕ Р“РѕРґР°
+                 -- РћРіСЂР°РЅРёС‡РµРЅРёСЏ РЅР° СЂР°Р±РѕС‚Сѓ РїРѕ РґРЅСЏРј РЅРµРґРµР»Рё
+              and to_char(sysdate,'D') in ('1', '2','3','4','5','7') -- Р Р°Р±РѕС‚Р°С‚СЊ РІСЃРµРіРґР° РІ СЂР°Р±РѕС‡РёРµ РґРЅРё
               Order By t.priority desc
          )
     Loop

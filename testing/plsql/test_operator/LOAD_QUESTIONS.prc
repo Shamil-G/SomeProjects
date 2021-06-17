@@ -8,13 +8,13 @@ v_order_answer pls_integer;
 BEGIN
   if lang not in ('kz', 'ru')
   then
-    raise_application_error(-20000,'Указан неверный язык: '||lang||chr(10)||chr(7)||'должен быть указан "kz" или "ru"');
+    raise_application_error(-20000,'РЈРєР°Р·Р°РЅ РЅРµРІРµСЂРЅС‹Р№ СЏР·С‹Рє: '||lang||chr(10)||chr(7)||'РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ "kz" РёР»Рё "ru"');
   end if;
   begin
     select id_theme, id_version
     into v_id_theme, v_id_version
     from test_operator.themes tm where tm.descr=table_name;
-  exception when no_data_found then raise_application_error(-20000,'Тема не найдена');
+  exception when no_data_found then raise_application_error(-20000,'РўРµРјР° РЅРµ РЅР°Р№РґРµРЅР°');
   end;
 
   delete from REPLIES r where r.ID_QUESTION in
@@ -39,10 +39,10 @@ BEGIN
         where q.order_num_question=cur.id_answer
         and   q.ID_THEME=v_id_theme
         and   q.language=lang;
-        exception when no_data_found then raise_application_error(-20000, 'В `test_operator.questions` для '||chr(10)||
+        exception when no_data_found then raise_application_error(-20000, 'Р’ `test_operator.questions` РґР»СЏ '||chr(10)||
                   'id_theme='||v_id_theme||
                   --', id_question='||cur.id_answer||
-                  ' не найден id_question='||cur.id_answer);
+                  ' РЅРµ РЅР°Р№РґРµРЅ id_question='||cur.id_answer);
       end;
 
       begin

@@ -30,7 +30,7 @@ is
   is
   begin
     if to_char(sysdate,'D')=6 or iforce='Y' then
-      dbms_application_info.set_module('SHRINK TABLE '||itable_name,'Упаковываем таблицу');
+      dbms_application_info.set_module('SHRINK TABLE '||itable_name,'РЈРїР°РєРѕРІС‹РІР°РµРј С‚Р°Р±Р»РёС†Сѓ');
       execute immediate 'ALTER TABLE '||itable_name||' ENABLE ROW MOVEMENT';    
       log(itable_name, 'SHRINK TABLE', 'ALTER TABLE '||itable_name||' SHRINK SPACE');
       execute immediate 'ALTER TABLE '||itable_name||' SHRINK SPACE';
@@ -41,10 +41,10 @@ is
     return pls_integer
   is
   begin
-    dbms_application_info.set_module('LOAD_TABLE','Отключаем индексы для: '||itable_name);
+    dbms_application_info.set_module('LOAD_TABLE','РћС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ РґР»СЏ: '||itable_name);
     begin
       select * into info from load_tables_status lt where lt.table_name = itable_name;
-      exception when no_data_found then null; -- Если вызываем из внешней процедуры, то можем получить прерывание на не зарегистрированную таблицу
+      exception when no_data_found then null; -- Р•СЃР»Рё РІС‹Р·С‹РІР°РµРј РёР· РІРЅРµС€РЅРµР№ РїСЂРѕС†РµРґСѓСЂС‹, С‚Рѕ РјРѕР¶РµРј РїРѕР»СѓС‡РёС‚СЊ РїСЂРµСЂС‹РІР°РЅРёРµ РЅР° РЅРµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ
     end;
     
     for current_constraint in (
@@ -54,22 +54,22 @@ is
               and status = 'ENABLED'
               )
     loop
-      log(itable_name, 'Отключаем CONSTRAINT',current_constraint.command);
+      log(itable_name, 'РћС‚РєР»СЋС‡Р°РµРј CONSTRAINT',current_constraint.command);
       begin
         EXECUTE immediate current_constraint.command;
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
-            log ( itable_name, 'Ошибка отключения CONSTRAINT '||sqlcode, current_constraint.command);
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
+            log ( itable_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ CONSTRAINT '||sqlcode, current_constraint.command);
             return 0;
         end if;
         return 1;
         exception when others then 
-            log ( itable_name, 'Ошибка отключения CONSTRAINT '||sqlcode, current_constraint.command);
+            log ( itable_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ CONSTRAINT '||sqlcode, current_constraint.command);
             return 0;
       end;
     end loop;
 
-    -- Отключим глоабльные индексы
+    -- РћС‚РєР»СЋС‡РёРј РіР»РѕР°Р±Р»СЊРЅС‹Рµ РёРЅРґРµРєСЃС‹
     for global_index in (select 'alter index '||index_name||' unusable' as command
           from all_indexes ai
           where table_name = itable_name
@@ -79,20 +79,20 @@ is
           order by ai.UNIQUENESS desc, index_name
         )
     loop
-      log(itable_name, 'Отключаем глобальный индекс', global_index.command );
+      log(itable_name, 'РћС‚РєР»СЋС‡Р°РµРј РіР»РѕР±Р°Р»СЊРЅС‹Р№ РёРЅРґРµРєСЃ', global_index.command );
       begin
         execute immediate global_index.command;
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
-            log ( itable_name, 'Ошибка отключения глобального индекса '||sqlcode, global_index.command);
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
+            log ( itable_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РёРЅРґРµРєСЃР° '||sqlcode, global_index.command);
             return 0;
         end if;
         exception when others then 
-          log ( itable_name, 'Ошибка отключения глобального индекса '||sqlcode, global_index.command);
+          log ( itable_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РёРЅРґРµРєСЃР° '||sqlcode, global_index.command);
       end;
     end loop;
 
-    -- Отключим индексы партиций
+    -- РћС‚РєР»СЋС‡РёРј РёРЅРґРµРєСЃС‹ РїР°СЂС‚РёС†РёР№
     FOR partition_index IN
         ( SELECT
                   'alter table '||table_name||' modify partition '||partition_name||' unusable local indexes' as command,
@@ -104,7 +104,7 @@ is
     )
     LOOP
       if  ( 
-            info.part_type!='DATE' -- Если партиции не по дате
+            info.part_type!='DATE' -- Р•СЃР»Рё РїР°СЂС‚РёС†РёРё РЅРµ РїРѕ РґР°С‚Рµ
             or
             (
             info.part_type='DATE'
@@ -113,13 +113,13 @@ is
             )
           )
       then
-        -- Отключаем партиционированный индекс, возвращается SQLCODE
-        -- Быстрей Truncate работает ?
-        log( partition_index.table_name, 'Отключаем партицию',partition_index.command);
+        -- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
+        -- Р‘С‹СЃС‚СЂРµР№ Truncate СЂР°Р±РѕС‚Р°РµС‚ ?
+        log( partition_index.table_name, 'РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёСЋ',partition_index.command);
         execute immediate partition_index.command;
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
-            log ( itable_name, 'Ошибка отключения партиций '||sqlcode, partition_index.command);
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
+            log ( itable_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ РїР°СЂС‚РёС†РёР№ '||sqlcode, partition_index.command);
             return 0;
         end if;
       else
@@ -133,7 +133,7 @@ is
   procedure index_on(itable_name varchar2)
   is
   begin
-    log(itable_name, 'Начинаем перестройку индексов');
+    log(itable_name, 'РќР°С‡РёРЅР°РµРј РїРµСЂРµСЃС‚СЂРѕР№РєСѓ РёРЅРґРµРєСЃРѕРІ');
     dbms_application_info.set_module('LOAD_TABLE->BUILD INDEX', itable_name);
     
     FOR current_index IN
@@ -160,16 +160,16 @@ is
     )
     LOOP
       begin
-        log(itable_name, 'Перестраиваем индекс '||current_index.index_name,current_index.build_command);
+        log(itable_name, 'РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃ '||current_index.index_name,current_index.build_command);
         EXECUTE immediate current_index.build_command;
       exception when others then
                 e_errm:=sqlerrm;
-                log(itable_name, 'Ошибка перестройки индекса: '||e_errm, current_index.build_command);
+                log(itable_name, 'РћС€РёР±РєР° РїРµСЂРµСЃС‚СЂРѕР№РєРё РёРЅРґРµРєСЃР°: '||e_errm, current_index.build_command);
       end;
     END LOOP;
 
-    --/* Зачем в аналитической системе PRIMARY KEY ??
-    --  Гусейнов Ш.А. 10.02.2020
+    --/* Р—Р°С‡РµРј РІ Р°РЅР°Р»РёС‚РёС‡РµСЃРєРѕР№ СЃРёСЃС‚РµРјРµ PRIMARY KEY ??
+    --  Р“СѓСЃРµР№РЅРѕРІ РЁ.Рђ. 10.02.2020
     if v_count_ins < 2048 then
         for current_constraint in (
                   select 'ALTER TABLE '||itable_name||' ENABLE CONSTRAINT '||a.CONSTRAINT_NAME command
@@ -178,13 +178,13 @@ is
                   and status = 'DISABLED'
                   )
         loop
-          log(itable_name, 'Включаем PRIMARY KEY',current_constraint.command);
+          log(itable_name, 'Р’РєР»СЋС‡Р°РµРј PRIMARY KEY',current_constraint.command);
           EXECUTE immediate current_constraint.command;
         end loop;
     end if;
     --*/
 
-    log(itable_name,'Перестройка индексов завершена');
+    log(itable_name,'РџРµСЂРµСЃС‚СЂРѕР№РєР° РёРЅРґРµРєСЃРѕРІ Р·Р°РІРµСЂС€РµРЅР°');
   end index_on;
 
 
@@ -200,8 +200,8 @@ is
   begin
     itable_name:=upper(i_table_name);
     select * into info from load_tables_status lt where lt.table_name = itable_name;
-    log(itable_name, '------->  Начата заливка таблицы');
-    log(itable_name, '-----  Включаем параллельный DML');
+    log(itable_name, '------->  РќР°С‡Р°С‚Р° Р·Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹');
+    log(itable_name, '-----  Р’РєР»СЋС‡Р°РµРј РїР°СЂР°Р»Р»РµР»СЊРЅС‹Р№ DML');
     execute immediate 'ALTER SESSION ENABLE PARALLEL DML';
         
     if coalesce(info.mnth_rollback,0) > 0 then
@@ -237,13 +237,13 @@ is
       return 1;
     end if;
 
-    dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'Отключаем индексы');
+    dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'РћС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹');
     if coalesce(info.mnth_rollback,0)=0 and
        coalesce(info.days_rollback,0)=0
        then
-          log(itable_name, 'Очищаем данные', cmd_del);
+          log(itable_name, 'РћС‡РёС‰Р°РµРј РґР°РЅРЅС‹Рµ', cmd_del);
           execute immediate cmd_del;
-          -- После TRUNCATE индексы автоматически включаются, поэтому их отключаем здесь
+          -- РџРѕСЃР»Рµ TRUNCATE РёРЅРґРµРєСЃС‹ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІРєР»СЋС‡Р°СЋС‚СЃСЏ, РїРѕСЌС‚РѕРјСѓ РёС… РѕС‚РєР»СЋС‡Р°РµРј Р·РґРµСЃСЊ
           if info.remove_index = 'Y' then
             if index_off(itable_name, v_month)=0 then
               return 0;
@@ -256,42 +256,42 @@ is
           end if;
         end if;
 
-        log(itable_name, 'Очищаем данные', cmd_del);
-        dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'Удаляем записи');
+        log(itable_name, 'РћС‡РёС‰Р°РµРј РґР°РЅРЅС‹Рµ', cmd_del);
+        dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃРё');
         
         execute immediate cmd_del;
           v_count:=SQL%rowcount;
-        log(itable_name, 'Удалено записей: '||v_count);
+        log(itable_name, 'РЈРґР°Р»РµРЅРѕ Р·Р°РїРёСЃРµР№: '||v_count);
     end if;
 
     commit;
     
     if coalesce(info.parallel,1)=0 then
-          log(itable_name, '----- Отключаем параллельный DML');
+          log(itable_name, '----- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂР°Р»Р»РµР»СЊРЅС‹Р№ DML');
           execute immediate 'ALTER SESSION DISABLE PARALLEL DML';
     end if;
-    -- Начинаем заливку данных
-    dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'Вставляем записи');
-    log(itable_name, 'Добавляем данные', cmd_ins);
+    -- РќР°С‡РёРЅР°РµРј Р·Р°Р»РёРІРєСѓ РґР°РЅРЅС‹С…
+    dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'Р’СЃС‚Р°РІР»СЏРµРј Р·Р°РїРёСЃРё');
+    log(itable_name, 'Р”РѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ', cmd_ins);
     execute immediate cmd_ins;
-    -- Окончание заливки
+    -- РћРєРѕРЅС‡Р°РЅРёРµ Р·Р°Р»РёРІРєРё
     v_count_ins:=SQL%rowcount;
-    log(itable_name, 'Загружено записей: '||v_count_ins);
+    log(itable_name, 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||v_count_ins);
     commit;
 
-    log(itable_name, '----- Включаем параллельный DML');
+    log(itable_name, '----- Р’РєР»СЋС‡Р°РµРј РїР°СЂР°Р»Р»РµР»СЊРЅС‹Р№ DML');
     execute immediate 'ALTER SESSION ENABLE PARALLEL DML';
 
     if info.remove_index = 'Y' then
-       dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'Перестраиваем индексы');
+       dbms_application_info.set_module('LOAD_TABLE -> '||itable_name,'РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹');
        index_on(itable_name);
     end if;
-    log(itable_name, '=====>  Заливка таблицы завершена');
+    log(itable_name, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°');
     return 1;
     exception when others then
         begin
               e_errm:=sqlerrm;
-              insert into log_load_tables values(CURRENT_TIMESTAMP, itable_name, 'Ошибка ', e_errm);
+              insert into log_load_tables values(CURRENT_TIMESTAMP, itable_name, 'РћС€РёР±РєР° ', e_errm);
               commit;
               return 0;
         end;

@@ -1,12 +1,12 @@
 create or replace package load_si_member_2 is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 26.11.2019 10:43:24
   
-  -- Purpose : Для загрузки партиционированных таблиц, ранжированных по дате платежа - PAY_DATE
-  -- Реализованы две альтернативные стратегии: 
-  -- 1. полная перезаливка партиций: make_member
-  -- 2. заливка за период две недели от текущей даты: make_member2 
+  -- Purpose : Р”Р»СЏ Р·Р°РіСЂСѓР·РєРё РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹С… С‚Р°Р±Р»РёС†, СЂР°РЅР¶РёСЂРѕРІР°РЅРЅС‹С… РїРѕ РґР°С‚Рµ РїР»Р°С‚РµР¶Р° - PAY_DATE
+  -- Р РµР°Р»РёР·РѕРІР°РЅС‹ РґРІРµ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹Рµ СЃС‚СЂР°С‚РµРіРёРё: 
+  -- 1. РїРѕР»РЅР°СЏ РїРµСЂРµР·Р°Р»РёРІРєР° РїР°СЂС‚РёС†РёР№: make_member
+  -- 2. Р·Р°Р»РёРІРєР° Р·Р° РїРµСЂРёРѕРґ РґРІРµ РЅРµРґРµР»Рё РѕС‚ С‚РµРєСѓС‰РµР№ РґР°С‚С‹: make_member2 
 
   procedure make; 
 
@@ -58,10 +58,10 @@ create or replace package body load_si_member_2 is
     Set t.state = 1,
         t.beg_time = sysdate,        
         t.end_time = '',
-        t.info='Загрузка началась'
+        t.info='Р—Р°РіСЂСѓР·РєР° РЅР°С‡Р°Р»Р°СЃСЊ'
     Where t.table_name=itable_name;
     Commit;
-    dbms_application_info.set_action('Загрузка таблицы '||itable_name);
+    dbms_application_info.set_action('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС†С‹ '||itable_name);
   end init_log;
   
   procedure stop_log(itable_name in varchar2)
@@ -87,7 +87,7 @@ create or replace package body load_si_member_2 is
     v_action:='REBUILD INDEXE';
     dbms_application_info.set_module('LOAD_SI_MEMBER_2',v_action);
     
-    log(itable_name, 'Начинаем перестройку индексов для '||itable_name);
+    log(itable_name, 'РќР°С‡РёРЅР°РµРј РїРµСЂРµСЃС‚СЂРѕР№РєСѓ РёРЅРґРµРєСЃРѕРІ РґР»СЏ '||itable_name);
 
     FOR current_index IN
     (
@@ -112,7 +112,7 @@ create or replace package body load_si_member_2 is
         ) order by build_command
     )
     LOOP
-      log('Перестраиваем индекс: '||current_index.index_name,current_index.build_command);
+      log('РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃ: '||current_index.index_name,current_index.build_command);
       EXECUTE immediate current_index.build_command;
     END LOOP;    
     
@@ -127,7 +127,7 @@ create or replace package body load_si_member_2 is
       execute immediate cmd;
     end loop;
     
-    log(itable_name,'Перестройка индексов для '||itable_name||' завершена');
+    log(itable_name,'РџРµСЂРµСЃС‚СЂРѕР№РєР° РёРЅРґРµРєСЃРѕРІ РґР»СЏ '||itable_name||' Р·Р°РІРµСЂС€РµРЅР°');
   end rebuild_indexes;
 
   function prepare_partition(dtab_name varchar2, icolumn_name in varchar2) 
@@ -137,8 +137,8 @@ create or replace package body load_si_member_2 is
     v_action:='PREPARE_PARTITION';
     dbms_application_info.set_module('LOAD_SI_MEMBER_2',v_action);
     
-    log ( dtab_name, 'Подготовка Партиций');
-    -- Отключим глоабльные индексы
+    log ( dtab_name, 'РџРѕРґРіРѕС‚РѕРІРєР° РџР°СЂС‚РёС†РёР№');
+    -- РћС‚РєР»СЋС‡РёРј РіР»РѕР°Р±Р»СЊРЅС‹Рµ РёРЅРґРµРєСЃС‹
     for global_index in (select index_name
           from all_indexes 
           where table_name = dtab_name
@@ -146,11 +146,11 @@ create or replace package body load_si_member_2 is
           and table_owner='SSWH'
         )
     loop
-      log('Отключаем глобальный индекс:'|| global_index.index_name );
+      log('РћС‚РєР»СЋС‡Р°РµРј РіР»РѕР±Р°Р»СЊРЅС‹Р№ РёРЅРґРµРєСЃ:'|| global_index.index_name );
       execute immediate 'alter index '||global_index.index_name||' unusable';
     end loop;
        
-    -- Отключим индексы партиций
+    -- РћС‚РєР»СЋС‡РёРј РёРЅРґРµРєСЃС‹ РїР°СЂС‚РёС†РёР№
     FOR part IN ( SELECT  table_name, partition_name, high_value,
                   partition_position
         FROM user_tab_partitions t
@@ -160,26 +160,26 @@ create or replace package body load_si_member_2 is
     LOOP
       if  to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' ) > trunc(reload_from,'YEAR')
       then
-        -- Отключаем партиционированный индекс, возвращается SQLCODE
-        -- Быстрей Truncate работает ?
-        log( 'Отключаем партицию: ' ||part.partition_name);
+        -- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
+        -- Р‘С‹СЃС‚СЂРµР№ Truncate СЂР°Р±РѕС‚Р°РµС‚ ?
+        log( 'РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёСЋ: ' ||part.partition_name);
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
             return 0;
         end if;
       else
         exit;
       end if;
     END LOOP;
-    log ( dtab_name, 'Подготовка партиций завершена');
+    log ( dtab_name, 'РџРѕРґРіРѕС‚РѕРІРєР° РїР°СЂС‚РёС†РёР№ Р·Р°РІРµСЂС€РµРЅР°');
 
-    log ( 'Далее будут загружаться строки ', 'условие загрузки: '||upper(icolumn_name)||'" >= '||to_char(reload_from,'dd.mm.yyyy HH24:MI:SS'));
+    log ( 'Р”Р°Р»РµРµ Р±СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ СЃС‚СЂРѕРєРё ', 'СѓСЃР»РѕРІРёРµ Р·Р°РіСЂСѓР·РєРё: '||upper(icolumn_name)||'" >= '||to_char(reload_from,'dd.mm.yyyy HH24:MI:SS'));
     return 1;
   end prepare_partition;
 
 
-  --Загрузка Virtual_Doc_List
+  --Р—Р°РіСЂСѓР·РєР° Virtual_Doc_List
   procedure reload_member(iv_table in varchar2)
   is
   v_cnt pls_integer default 0;
@@ -241,9 +241,9 @@ create or replace package body load_si_member_2 is
          'WHERE s.pay_date_gfss = ''10.01.2020'' '||
          'and s.pay_date = ''09.01.2020'' ';
 */
-    log('Открываем курсор для: '||iv_table, cmd);
+    log('РћС‚РєСЂС‹РІР°РµРј РєСѓСЂСЃРѕСЂ РґР»СЏ: '||iv_table, cmd);
     open all_member for cmd;
-    log(iv_table,'Начинаем загружать данные');
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ');
     cnt_rows:=0;
     v_cnt:=1;        
     
@@ -299,7 +299,7 @@ create or replace package body load_si_member_2 is
     close all_member;
     list_t_member.delete;
 
-    log('---> Данные загружены', cnt_rows||' - записей' );    
+    log('---> Р”Р°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶РµРЅС‹', cnt_rows||' - Р·Р°РїРёСЃРµР№' );    
   end reload_member;  
   
   function trunc_partition(dtab_name varchar2, must_date out date) 
@@ -308,7 +308,7 @@ create or replace package body load_si_member_2 is
   begin
     v_action:='TRUNC_PARTITION';
     dbms_application_info.set_module('LOAD_SI_MEMBER_2',v_action);
-    -- Отключим глоабльные индексы
+    -- РћС‚РєР»СЋС‡РёРј РіР»РѕР°Р±Р»СЊРЅС‹Рµ РёРЅРґРµРєСЃС‹
     for global_index in (select index_name
           from all_indexes 
           where table_name = dtab_name
@@ -316,11 +316,11 @@ create or replace package body load_si_member_2 is
           and table_owner='SSWH'
         )
     loop
-      log('Отключение глобального индекса: '||global_index.index_name);
+      log('РћС‚РєР»СЋС‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РёРЅРґРµРєСЃР°: '||global_index.index_name);
       execute immediate 'alter index '||global_index.index_name||' unusable';
     end loop;
       
-    -- Обрежем партиции
+    -- РћР±СЂРµР¶РµРј РїР°СЂС‚РёС†РёРё
     FOR part IN ( SELECT  table_name, partition_name, high_value,
                   partition_position
         FROM user_tab_partitions t
@@ -331,17 +331,17 @@ create or replace package body load_si_member_2 is
       if  to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' ) > trunc(reload_before,'YEAR')
       then
         must_date:=to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' );
-        -- Отключаем партиционированный индекс, возвращается SQLCODE
-        -- Быстрей Truncate работает ?
+        -- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
+        -- Р‘С‹СЃС‚СЂРµР№ Truncate СЂР°Р±РѕС‚Р°РµС‚ ?
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
-        -- Чистим партиции
+        -- Р§РёСЃС‚РёРј РїР°СЂС‚РёС†РёРё
         log( 'TRUNCATE PARTITION: ' || part.partition_name);
         execute immediate 'ALTER TABLE '||part.table_name||' TRUNCATE PARTITION '||part.partition_name||'';
-        -- После Truncate Index становится "USABLE" - фича или баг?
-        -- Повторно отключаем партиционированный индекс, возвращается SQLCODE
+        -- РџРѕСЃР»Рµ Truncate Index СЃС‚Р°РЅРѕРІРёС‚СЃСЏ "USABLE" - С„РёС‡Р° РёР»Рё Р±Р°Рі?
+        -- РџРѕРІС‚РѕСЂРЅРѕ РѕС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
             return 0;
         end if;
         log( 'SET UNUSABLE PARTITION: '||part.partition_name);
@@ -350,7 +350,7 @@ create or replace package body load_si_member_2 is
         exit;
       end if;
     END LOOP;
-    log ( 'TRUNCATE PARTITION', 'Будут загружаться строки с "PAY_DATE" >= '||to_char(must_date,'dd.mm.yyyy'));
+    log ( 'TRUNCATE PARTITION', 'Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ СЃС‚СЂРѕРєРё СЃ "PAY_DATE" >= '||to_char(must_date,'dd.mm.yyyy'));
     return 1;
   end trunc_partition;
 
@@ -362,10 +362,10 @@ create or replace package body load_si_member_2 is
     
     cmd:='delete /*+parallel(4)*/ from '||dtab_name||' dt where dt.pay_date_gfss >= '''||to_date(idate,'dd.mm.yyyy')||
                       ''' and dt.pay_date > '''||to_date(add_months(idate,-1),'dd.mm.yyyy')||''''; 
-    log ( 'Удаляем записи',cmd);
+    log ( 'РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃРё',cmd);
     execute immediate cmd;
     commit;
-    log (  '---> Записи удалены',sql%rowcount||' - записей');
+    log (  '---> Р—Р°РїРёСЃРё СѓРґР°Р»РµРЅС‹',sql%rowcount||' - Р·Р°РїРёСЃРµР№');
   end;
 
   procedure make_member(iv_table in varchar2) 
@@ -375,7 +375,7 @@ create or replace package body load_si_member_2 is
     v_action:='MAKE_MEMBER';
     dbms_application_info.set_module('LOAD_SI_MEMBER_2','MAKE_MEMBER');
     
-    -- Загрузка SI_MEMBER
+    -- Р—Р°РіСЂСѓР·РєР° SI_MEMBER
     reload_before:=to_date('01.01.2010','dd.mm.yyyy');
     if trunc_partition(iv_table, must_date)=0 
     then
@@ -384,7 +384,7 @@ create or replace package body load_si_member_2 is
     reload_from:=must_date;
     reload_member(iv_table);
     rebuild_indexes(iv_table);
-    log('+++ Таблица '||upper(iv_table)||' загружена по разделам', 'Загружено записей: '||cnt_rows);
+    log('+++ РўР°Р±Р»РёС†Р° '||upper(iv_table)||' Р·Р°РіСЂСѓР¶РµРЅР° РїРѕ СЂР°Р·РґРµР»Р°Рј', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);
 
   end make_member;
 
@@ -395,39 +395,39 @@ create or replace package body load_si_member_2 is
     v_action:='MAKE_MEMBER2';
     dbms_application_info.set_module('LOAD_SI_MEMBER_2',v_action);
     
-    log(iv_table,'+++ Начало загрузки '||upper(iv_table)||' по диапазону дат');
+    log(iv_table,'+++ РќР°С‡Р°Р»Рѕ Р·Р°РіСЂСѓР·РєРё '||upper(iv_table)||' РїРѕ РґРёР°РїР°Р·РѕРЅСѓ РґР°С‚');
 
     update load_tables_status lt
     set   lt.state=1,
           lt.beg_time=sysdate,
           lt.end_time=null,
-          lt.info='Загрузка началась'
+          lt.info='Р—Р°РіСЂСѓР·РєР° РЅР°С‡Р°Р»Р°СЃСЊ'
     where  upper(lt.table_name) = upper(iv_table);
     commit;
     
-    -- Выбираем нужную партицию, отключаем индексы и удаляем записи за "v_count_day" последних дней
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ Рё СѓРґР°Р»СЏРµРј Р·Р°РїРёСЃРё Р·Р° "v_count_day" РїРѕСЃР»РµРґРЅРёС… РґРЅРµР№
     if prepare_partition(iv_table, 'PAY_DATE')=0
     then
       return;
     end if;
     execute immediate 'ALTER SESSION ENABLE PARALLEL DML';
     delete_rows(iv_table, reload_from);
-    -- Загружаем данные
+    -- Р—Р°РіСЂСѓР¶Р°РµРј РґР°РЅРЅС‹Рµ
     execute immediate 'ALTER SESSION DISABLE PARALLEL DML';
-    log(iv_table,'--> Загрузка таблицы ');
+    log(iv_table,'--> Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС†С‹ ');
     reload_member(iv_table);
-    -- Перестраиваем индексы
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
     execute immediate 'ALTER SESSION ENABLE PARALLEL DML';
     
-    -- раскомментарить 3.11.2020 после завершения тестирования
+    -- СЂР°СЃРєРѕРјРјРµРЅС‚Р°СЂРёС‚СЊ 3.11.2020 РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
     rebuild_indexes(iv_table);
     
     
-    log('+++ Таблица '||' загружена по диапазону дат', 'Загружено записей: '||cnt_rows);
+    log('+++ РўР°Р±Р»РёС†Р° '||' Р·Р°РіСЂСѓР¶РµРЅР° РїРѕ РґРёР°РїР°Р·РѕРЅСѓ РґР°С‚', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);
     exception when others then
         begin
               e_errm:=sqlerrm;
-              insert into log_load_tables values(CURRENT_TIMESTAMP, 'SI_MEMBER_2', 'MAKE_MEMBER2->Ошибка: ', e_errm);
+              insert into log_load_tables values(CURRENT_TIMESTAMP, 'SI_MEMBER_2', 'MAKE_MEMBER2->РћС€РёР±РєР°: ', e_errm);
               commit;
               return;
         end;
@@ -446,13 +446,13 @@ create or replace package body load_si_member_2 is
 
     v_table := 'SI_MEMBER_2';
     if set_days_reload(v_table)=1 then
-        log( v_table, 'Загрузка данных уже выполняется ...');
+        log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ ...');
         return;
     end if;
 
     if trunc(v_last_success_date,'MONTH') >= trunc(sysdate,'MONTH')
     then
-        log( v_table, 'Загрузка данных уже выполнена');
+        log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅРµРЅР°');
     else
         init_log(v_table);    
         make_member2(v_table);

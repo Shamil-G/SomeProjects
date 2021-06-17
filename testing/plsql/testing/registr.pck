@@ -95,7 +95,7 @@ begin
           secmgr.sec_ctx.log('-+- not found groups_tests for v_id_organization: '||iid_organization||
       ', iid_kind_testing: '||iid_kind_testing||
       ', v_id_category_for_position'||iid_category_for_position);
-      raise_application_error(-20000,'-+- Не найдена группа тестов для  v_id_organization: '||iid_organization||
+      raise_application_error(-20000,'-+- РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР° С‚РµСЃС‚РѕРІ РґР»СЏ  v_id_organization: '||iid_organization||
       ', iid_kind_testing: '||iid_kind_testing||
       ', v_id_category_for_position'||iid_category_for_position);
     end;
@@ -104,7 +104,7 @@ begin
 return v_id_bundle_theme;
 end getIdBundleTheme;
 
--- генерация вопросов
+-- РіРµРЅРµСЂР°С†РёСЏ РІРѕРїСЂРѕСЃРѕРІ
 procedure generate_questions(iid_registration number, iid_theme number, icount_questions number)
 is
 id_num            pls_integer;
@@ -155,7 +155,7 @@ begin
 --  secmgr.sec_ctx.log('-+- finish -+-');
 end generate_questions;
 
--- проверка допустимости регистрации
+-- РїСЂРѕРІРµСЂРєР° РґРѕРїСѓСЃС‚РёРјРѕСЃС‚Рё СЂРµРіРёСЃС‚СЂР°С†РёРё
 function checkUserForTesting(iid_person in number, 
          iid_category_for_position in number, 
          iid_kind_testing in number,
@@ -201,7 +201,7 @@ begin
                                r.end_day_testing
                         from registration r
                         where r.id_person=iid_person
-                        and   r.status!='Неявка'
+                        and   r.status!='РќРµСЏРІРєР°'
                         --and   (sysdate-r.date_registration)<360
                         and   r.id_category_for_position 
                               in (  select c.id_category_for_position 
@@ -220,20 +220,20 @@ begin
           v_first:=Cur.Beg_Time_Testing;
           if (idate_testing-v_first)<v_interval_first
           then
-              str:= 'К тесту не допущен: '||
+              str:= 'Рљ С‚РµСЃС‚Сѓ РЅРµ РґРѕРїСѓС‰РµРЅ: '||
                     user_name(iid_person)||
-                    ', после последнего тестирования прошло всего '||
-                    (idate_testing - v_first)||' дней, должно быть: '||
+                    ', РїРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
+                    (idate_testing - v_first)||' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_first;
           end if;
         else
           v_first:=Cur.Date_Testing;
           if  (idate_testing - v_first)<v_interval_first
           then
-              str:= 'К тесту не допущен: '||
+              str:= 'Рљ С‚РµСЃС‚Сѓ РЅРµ РґРѕРїСѓС‰РµРЅ: '||
                     user_name(iid_person)||
-                    ', после последнего тестирования прошло всего '||
-                    (idate_testing - v_first)||' дней, должно быть: '||
+                    ', РїРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
+                    (idate_testing - v_first)||' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_first;
           end if;
         end if;    
@@ -242,10 +242,10 @@ begin
     then 
           if (idate_testing-v_first)<v_interval_second
           then
-              str:= 'К тесту не допущен: '||
+              str:= 'Рљ С‚РµСЃС‚Сѓ РЅРµ РґРѕРїСѓС‰РµРЅ: '||
                     user_name(iid_person)||
-                    ', после последнего тестирования прошло всего '||
-                    (idate_testing - v_first)||' дней, должно быть: '||
+                    ', РїРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
+                    (idate_testing - v_first)||' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_second;
           end if;
     end if; 
@@ -312,7 +312,7 @@ begin
           sys_context('SEC_CTX','id_person'),
           sys_context('SEC_CTX','id_region'),
           idate_testing, iid_subdivision,
-          iid_position, 'Готов', ikey_access,
+          iid_position, 'Р“РѕС‚РѕРІ', ikey_access,
           null, null,
           iend_day_testing, 
           case  when ilanguage is null then sys_context('SEC_CTX','language') else ilanguage end  );
@@ -323,7 +323,7 @@ begin
                           id_current_theme, beg_time_testing, last_time_access,
                           status_testing)
       values ( iid_registration, 
-             v_id_bundle_theme, null, null, null, 'Готов');
+             v_id_bundle_theme, null, null, null, 'Р“РѕС‚РѕРІ');
 
       v_id_param:=-1;
       v_first_theme:=true;
@@ -373,7 +373,7 @@ begin
                    Cur.count_success,
                    case when Cur.Is_Groups='Y' then 0 else Cur.period_for_testing end, 
                    0, 
-                   'Готов' );
+                   'Р“РѕС‚РѕРІ' );
 
              generate_questions(iid_registration, Cur.id_theme, Cur.count_question);
           end loop;
@@ -399,7 +399,7 @@ begin
   from registration r
   where r.id_registration=iid_registration;
 
-  if v_status in ('Готов')
+  if v_status in ('Р“РѕС‚РѕРІ')
   then
     update test_operator.registration r
     set  r.id_education=iid_education,
@@ -421,7 +421,7 @@ as
 str       nvarchar2(128);
 begin
 
-  str:='Блокировал '||user_name(sys_context('SEC_CTX','id_person'));
+  str:='Р‘Р»РѕРєРёСЂРѕРІР°Р» '||user_name(sys_context('SEC_CTX','id_person'));
   update registration r
   set r.status=str
   where r.id_registration=iid_registration;
@@ -433,7 +433,7 @@ as
 begin
   secmgr.sec_ctx.log('-+- 2 iid_registration: '||iid_registration);
   update registration r
-  set r.status='Разблокирован Администратором',
+  set r.status='Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј',
       r.id_pc=null
   where r.id_registration=iid_registration;
 commit;

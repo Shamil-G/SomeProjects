@@ -69,7 +69,7 @@ begin
 
   return Result;
   exception when no_data_found then null;
---  ofio:='Êàíäèäàò îòñóñòâóåò â ñèñòåìå';
+--  ofio:='ÐšÐ°Ð½Ð´Ð¸Ð´Ð°Ñ‚ Ð¾Ñ‚ÑÑƒÑÑ‚Ð²ÑƒÐµÑ‚ Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ';
 end getNameEmp;
 
 procedure getFIOByIIN(iiin in number, ofio out nvarchar2)
@@ -83,7 +83,7 @@ begin
 
   ofio:=Result;
   exception when no_data_found then
---  ofio:='Êàíäèäàò îòñóñòâóåò â ñèñòåìå';
+--  ofio:='ÐšÐ°Ð½Ð´Ð¸Ð´Ð°Ñ‚ Ð¾Ñ‚ÑÑƒÑÑ‚Ð²ÑƒÐµÑ‚ Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ';
   ofio:='';
 end getFIOByIIN;
 
@@ -110,7 +110,7 @@ begin
   from test_operator.registration r
   where r.id_registration=iid_registration;
   return Result;
-  exception when no_data_found then return 'Èìÿ c id_reg='||iid_registration||' íå íàéäåíî â òàáëèöå Persons';
+  exception when no_data_found then return 'Ð˜Ð¼Ñ c id_reg='||iid_registration||' Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾ Ð² Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ðµ Persons';
 end;
 
 function getFIO(iid_person in number)
@@ -191,7 +191,7 @@ for CUR in  ( SELECT test_operator.helper.getCompactFIO(r.id_person) fio
               where trunc(r.date_testing,'day')>=idate_beg_testing
               and   trunc(r.date_testing,'day')<=idate_end_testing
 --              and r.id_organization=iid_organization
-              and   r.status in ('Íåÿâêà','Ãîòîâ')
+              and   r.status in ('ÐÐµÑÐ²ÐºÐ°','Ð“Ð¾Ñ‚Ð¾Ð²')
             )
 loop
   v_result:=v_result||cur.fio ||',';
@@ -357,7 +357,7 @@ begin
   from test_operator.users_bundle_composition bc, test_operator.themes t
   where bc.id_theme=t.id_theme
   and   bc.id_registration=iid_registration
-  and   instr( nvl(t.descr,'1'),'òåïëîìåõàí',1,1)>0;
+  and   instr( nvl(t.descr,'1'),'Ñ‚ÐµÐ¿Ð»Ð¾Ð¼ÐµÑ…Ð°Ð½',1,1)>0;
   return v_count;
   exception when no_data_found then return 0;
 end countSuccessQuestionPTBT;
@@ -370,7 +370,7 @@ begin
   from test_operator.users_bundle_composition bc, test_operator.themes t
   where bc.id_theme=t.id_theme
   and   bc.id_registration=iid_registration
-  and   instr( nvl(t.descr,'1'),'ýëåêòðîóñòàíîâîê',1,1)>0;
+  and   instr( nvl(t.descr,'1'),'ÑÐ»ÐµÐºÑ‚Ñ€Ð¾ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¾Ðº',1,1)>0;
   return v_count;
   exception when no_data_found then return 0;
 end countSuccessQuestionPTBe;
@@ -383,7 +383,7 @@ begin
   from test_operator.users_bundle_composition bc, test_operator.themes t
   where bc.id_theme=t.id_theme
   and   bc.id_registration=iid_registration
-  and   instr( nvl(t.descr,'1'),'ýëåêòðè÷åñêèõ ñòàíöèé',1,1)>0;
+  and   instr( nvl(t.descr,'1'),'ÑÐ»ÐµÐºÑ‚Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… ÑÑ‚Ð°Ð½Ñ†Ð¸Ð¹',1,1)>0;
   return v_count;
   exception when no_data_found then return 0;
 end countSuccessQuestionPTECT;

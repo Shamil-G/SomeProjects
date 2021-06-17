@@ -2,9 +2,9 @@ create or replace function getOrganization( co in varchar2 ) return varchar2
 is
 Result varchar2(64);
 begin
-  case when co = 'ts' then Result:='Тепловые сети';
-       when co = 'es' then Result:='Электрические сети';
-       when co = 'eo' then Result:='Электрические сети/электроснабжающие организации';
+  case when co = 'ts' then Result:='РўРµРїР»РѕРІС‹Рµ СЃРµС‚Рё';
+       when co = 'es' then Result:='Р­Р»РµРєС‚СЂРёС‡РµСЃРєРёРµ СЃРµС‚Рё';
+       when co = 'eo' then Result:='Р­Р»РµРєС‚СЂРёС‡РµСЃРєРёРµ СЃРµС‚Рё/СЌР»РµРєС‚СЂРѕСЃРЅР°Р±Р¶Р°СЋС‰РёРµ РѕСЂРіР°РЅРёР·Р°С†РёРё';
        else    Result:='';
   end case;
   return Result;

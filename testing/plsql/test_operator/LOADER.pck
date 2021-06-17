@@ -71,13 +71,13 @@ procedure REPLACE_QUESTIONS(table_name in varchar2, lang in varchar) AS
  BEGIN
   if lang not in ('kz', 'ru')
   then
-    raise_application_error(-20000,'Указан неверный язык: '||lang||chr(10)||chr(7)||'должен быть указан "kz" или "ru"');
+    raise_application_error(-20000,'РЈРєР°Р·Р°РЅ РЅРµРІРµСЂРЅС‹Р№ СЏР·С‹Рє: '||lang||chr(10)||chr(7)||'РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ "kz" РёР»Рё "ru"');
   end if;
   begin
     select id_theme
     into v_id_theme
     from test_operator.themes tm where tm.descr=table_name;
-  exception when no_data_found then raise_application_error(-20000,'Тема не найдена');
+  exception when no_data_found then raise_application_error(-20000,'РўРµРјР° РЅРµ РЅР°Р№РґРµРЅР°');
   end;
 
   v_version_number:=incrementVersionQuestions(v_id_theme, lang);
@@ -122,14 +122,14 @@ procedure APPEND_QUESTIONS(table_name in varchar2, lang in varchar) AS
   BEGIN
   if lang not in ('kz', 'ru')
   then
-    raise_application_error(-20000,'Указан неверный язык: '||lang||chr(10)||chr(7)||'должен быть указан "kz" или "ru"');
+    raise_application_error(-20000,'РЈРєР°Р·Р°РЅ РЅРµРІРµСЂРЅС‹Р№ СЏР·С‹Рє: '||lang||chr(10)||chr(7)||'РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ "kz" РёР»Рё "ru"');
   end if;
 
   begin
     select id_theme
     into v_id_theme
     from test_operator.themes tm where tm.descr=table_name;
-  exception when no_data_found then raise_application_error(-20000,'Тема не найдена');
+  exception when no_data_found then raise_application_error(-20000,'РўРµРјР° РЅРµ РЅР°Р№РґРµРЅР°');
   end;
 
   begin
@@ -139,7 +139,7 @@ procedure APPEND_QUESTIONS(table_name in varchar2, lang in varchar) AS
     where vt.id_theme=v_id_theme
     and   vt.language=lang
     and   vt.selected='Y';
-  exception when no_data_found then raise_application_error(-20000,'Версия не найдена');
+  exception when no_data_found then raise_application_error(-20000,'Р’РµСЂСЃРёСЏ РЅРµ РЅР°Р№РґРµРЅР°');
   end;
 
   --delete from REPLIES r where r.ID_QUESTION in

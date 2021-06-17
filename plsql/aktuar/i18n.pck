@@ -1,6 +1,6 @@
 create or replace package i18n is
 
-  -- Author  : цсяеимнб_ь
+  -- Author  : п⌠пёп║п∙п≥п²п·п▓_п╗
   -- Created : 08.02.2021 9:07:51
   -- Purpose : 
   

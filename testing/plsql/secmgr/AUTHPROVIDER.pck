@@ -1,7 +1,7 @@
 create or replace package AuthProvider is
   -- Author  : SHAMIL
   -- Created : 08.04.2011 17:02:12
-  -- Purpose : Поддержка авторизации на стороне сервера приложений
+  -- Purpose : РџРѕРґРґРµСЂР¶РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё РЅР° СЃС‚РѕСЂРѕРЅРµ СЃРµСЂРІРµСЂР° РїСЂРёР»РѕР¶РµРЅРёР№
 
   procedure user_new(uname in varchar2, passwd in varchar2, idescr in varchar2);
   procedure user_passwd(passwd in varchar2, uname in varchar2);
@@ -63,7 +63,7 @@ create or replace package body AuthProvider is
     select e.id_emp into v_id_emp from secmgr.emp e where e.username=uname;
     INSERT INTO SECMGR.members_group_employee VALUES( v_id_group, v_id_emp);
   commit;
-  exception when no_data_found then secmgr.sec_ctx.log('Не найдена группа или сотрудник');
+  exception when no_data_found then secmgr.sec_ctx.log('РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР° РёР»Рё СЃРѕС‚СЂСѓРґРЅРёРє');
   end member_add;
 
   procedure member_remove(ugroup in varchar2, uname in varchar2) is
@@ -76,7 +76,7 @@ create or replace package body AuthProvider is
     where u.id_group = v_id_group
     or    u.id_emp = v_id_emp;
   commit;
-  exception when no_data_found then secmgr.sec_ctx.log('Не найдена группа или сотрудник');
+  exception when no_data_found then secmgr.sec_ctx.log('РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР° РёР»Рё СЃРѕС‚СЂСѓРґРЅРёРє');
   end member_remove;
 
   procedure member_group_remove(ugroup in varchar2) is
@@ -86,7 +86,7 @@ create or replace package body AuthProvider is
     DELETE FROM secmgr.members_group_employee u
     WHERE u.id_group = v_id_group;
   commit;
-  exception when no_data_found then secmgr.sec_ctx.log('Не найдена группа');
+  exception when no_data_found then secmgr.sec_ctx.log('РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР°');
   end member_group_remove;
 
   procedure remove_member_from_group(ugroup in varchar2, uname in varchar2) is
@@ -99,7 +99,7 @@ create or replace package body AuthProvider is
     where u.id_group = v_id_group
     and    u.id_emp = v_id_emp;
   commit;
-  exception when no_data_found then secmgr.sec_ctx.log('Не найдена группа или сотрудник');
+  exception when no_data_found then secmgr.sec_ctx.log('РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР° РёР»Рё СЃРѕС‚СЂСѓРґРЅРёРє');
   end remove_member_from_group;
 
 --begin

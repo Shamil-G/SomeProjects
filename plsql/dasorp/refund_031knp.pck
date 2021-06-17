@@ -1,8 +1,8 @@
 create or replace package refund_031knp is
 
-  -- Author  : БЕГАДИЛОВ_М
+  -- Author  : Р“СѓСЃРµР№РЅРѕРІ РЁ., Р‘Р•Р“РђР”РР›РћР’_Рњ
   -- Created : 03.06.2021 9:14:06
-  -- Purpose : Невошедшие возвраты излишне перечисленных СО
+  -- Purpose : РќРµРІРѕС€РµРґС€РёРµ РІРѕР·РІСЂР°С‚С‹ РёР·Р»РёС€РЅРµ РїРµСЂРµС‡РёСЃР»РµРЅРЅС‹С… РЎРћ
   
  procedure add_sior(
     isior_id  in number,
@@ -64,7 +64,7 @@ create or replace package body refund_031knp is
     v_iin CHAR(12);
     v_fio hist_ret_SO_031KNP.Fio%type;
   begin 
-   log('Начало. Для isior_id: '||isior_id||' начали SELECT');
+   log('РќР°С‡Р°Р»Рѕ. Р”Р»СЏ isior_id: '||isior_id||' РЅР°С‡Р°Р»Рё SELECT');
 
     select   j.gfss_in_nom,
              to_char(gfss_in_date,'dd.mm.yyyy') doc_date,
@@ -89,7 +89,7 @@ create or replace package body refund_031knp is
     from person@crtr p 
     where p.sicid=v_sicid;
     
-    log('Начинаем INSERT. Для isior_id: '||isior_id||', найдено v_gfss_in_nom: '||v_gfss_in_nom||', v_period: '||v_period||
+    log('РќР°С‡РёРЅР°РµРј INSERT. Р”Р»СЏ isior_id: '||isior_id||', РЅР°Р№РґРµРЅРѕ v_gfss_in_nom: '||v_gfss_in_nom||', v_period: '||v_period||
           ', v_sum_gfss: '||v_sum_gfss||', isum_ret: '||isum_ret||', idoc_date_df: '||idoc_date_df||', idate_ret: '||idate_ret);
     
    insert into HIST_RET_SO_031KNP

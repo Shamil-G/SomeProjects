@@ -92,7 +92,7 @@ create or replace package body arm_test_operator is
         into res
         from test_operator.registration r
         where r.id_person=iid_person
-        and r.status not in ('Готов','Неявка');
+        and r.status not in ('Р“РѕС‚РѕРІ','РќРµСЏРІРєР°');
         return res;
     end IsEditablePerson;
     function getIdVersionByIdTheme(iid_theme number, ilang varchar2) return simple_integer
@@ -125,7 +125,7 @@ create or replace package body arm_test_operator is
   begin
   secmgr.sec_ctx.log(iDebug=>5,
                 iappname=>'arm_tester_operator',
-                ioperation=>'Обновление темы ',
+                ioperation=>'РћР±РЅРѕРІР»РµРЅРёРµ С‚РµРјС‹ ',
                 imodule=>'bundle_theme_upd',
                 imessage=> 'iid_bundle_theme='||iid_bundle_theme||
                 ', id_theme='||iid_theme||
@@ -145,8 +145,8 @@ create or replace package body arm_test_operator is
     and   bc.id_bundle=r.id_bundle;
 
     if v_count>0 then
-    raise_application_error(-20000,'Эта программа уже использовалась '||v_count||' раз'||
-        chr(10)||'Изменить её нельзя.');
+    raise_application_error(-20000,'Р­С‚Р° РїСЂРѕРіСЂР°РјРјР° СѓР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°Р»Р°СЃСЊ '||v_count||' СЂР°Р·'||
+        chr(10)||'РР·РјРµРЅРёС‚СЊ РµС‘ РЅРµР»СЊР·СЏ.');
     end if;
 
     update test_operator.bundle_theme b
@@ -167,9 +167,9 @@ create or replace package body arm_test_operator is
     begin
         secmgr.sec_ctx.log(iDebug=>5,
                 iappname=>'arm_tester_operator',
-                ioperation=>'Удаление темы из списка',
+                ioperation=>'РЈРґР°Р»РµРЅРёРµ С‚РµРјС‹ РёР· СЃРїРёСЃРєР°',
                 imodule=>'bundle_theme_del',
-                imessage=> 'Операция удаления для iid_bundle_theme='||iid_bundle_theme );
+                imessage=> 'РћРїРµСЂР°С†РёСЏ СѓРґР°Р»РµРЅРёСЏ РґР»СЏ iid_bundle_theme='||iid_bundle_theme );
 
         select r.id_bundle
         into  v_id_bundle
@@ -178,8 +178,8 @@ create or replace package body arm_test_operator is
         where bc.id_bundle_theme=iid_bundle_theme
         and   bc.id_bundle=r.id_bundle;
 
-        raise_application_error(-20000,'Эта программа уже использовалась. (iid_bundle_theme='||
-        iid_bundle_theme||')'||chr(10)||'Изменить её нельзя.');
+        raise_application_error(-20000,'Р­С‚Р° РїСЂРѕРіСЂР°РјРјР° СѓР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°Р»Р°СЃСЊ. (iid_bundle_theme='||
+        iid_bundle_theme||')'||chr(10)||'РР·РјРµРЅРёС‚СЊ РµС‘ РЅРµР»СЊР·СЏ.');
         return;
 
         exception when no_data_found then
@@ -191,9 +191,9 @@ create or replace package body arm_test_operator is
 
 /*  secmgr.sec_ctx.log(iDebug=>5,
                 iappname=>'arm_tester_operator',
-                ioperation=>'Удаление темы из списка',
+                ioperation=>'РЈРґР°Р»РµРЅРёРµ С‚РµРјС‹ РёР· СЃРїРёСЃРєР°',
                 imodule=>'bundle_theme_del',
-                imessage=> 'Операция удаления для iid_bundle_theme='||iid_bundle_theme );
+                imessage=> 'РћРїРµСЂР°С†РёСЏ СѓРґР°Р»РµРЅРёСЏ РґР»СЏ iid_bundle_theme='||iid_bundle_theme );
         delete from test_operator.bundle_theme bc
         where bc.id_bundle_theme=iid_bundle_theme;
 
@@ -270,19 +270,19 @@ create or replace package body arm_test_operator is
     begin
     if iid_person is null
     then
-        raise_application_error(-20000,'IdPerson не имеет значения');
+        raise_application_error(-20000,'IdPerson РЅРµ РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёСЏ');
     end if;
     if iiin is null
     then
-        raise_application_error(-20000,'ИИН не имеет значения');
+        raise_application_error(-20000,'РРРќ РЅРµ РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёСЏ');
     end if;
     if ilastname is null
     then
-        raise_application_error(-20000,'Фамилия не указана');
+        raise_application_error(-20000,'Р¤Р°РјРёР»РёСЏ РЅРµ СѓРєР°Р·Р°РЅР°');
     end if;
     if iname is null
     then
-        raise_application_error(-20000,'Имя не указана');
+        raise_application_error(-20000,'РРјСЏ РЅРµ СѓРєР°Р·Р°РЅР°');
     end if;
 
     insert into test_operator.persons (id_person, iin, birthday, lastname, name, middlename, email, sex )
@@ -380,7 +380,7 @@ create or replace package body arm_test_operator is
     from test_operator.questions_for_testing qt
     where qt.id_question=iid_question;
     if v_count > 0 then
-       raise_application_error(-20000, 'Корректировка вопросов которые использовались при тестировании - ЗАПРЕЩЕНА');
+       raise_application_error(-20000, 'РљРѕСЂСЂРµРєС‚РёСЂРѕРІРєР° РІРѕРїСЂРѕСЃРѕРІ РєРѕС‚РѕСЂС‹Рµ РёСЃРїРѕР»СЊР·РѕРІР°Р»РёСЃСЊ РїСЂРё С‚РµСЃС‚РёСЂРѕРІР°РЅРёРё - Р—РђРџР Р•Р©Р•РќРђ');
        return;
     end if;
 
@@ -437,7 +437,7 @@ create or replace package body arm_test_operator is
     from test_operator.questions_for_testing qt
     where qt.id_reply=iid_reply;
     if v_count > 0 then
-       raise_application_error(-20000, 'Корректировка ответов которые использовались при тестировании - ЗАПРЕЩЕНА');
+       raise_application_error(-20000, 'РљРѕСЂСЂРµРєС‚РёСЂРѕРІРєР° РѕС‚РІРµС‚РѕРІ РєРѕС‚РѕСЂС‹Рµ РёСЃРїРѕР»СЊР·РѕРІР°Р»РёСЃСЊ РїСЂРё С‚РµСЃС‚РёСЂРѕРІР°РЅРёРё - Р—РђРџР Р•Р©Р•РќРђ');
        return;
     end if;
 

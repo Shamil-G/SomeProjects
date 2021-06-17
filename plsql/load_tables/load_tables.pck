@@ -1,11 +1,11 @@
 create or replace package load_tables is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 28.08.2019 11:34:24
-  -- Purpose : Для загрузки партиционированных таблиц, ранжированных по дате платежа - PAY_DATE
-  -- Реализованы две альтернативные стратегии: 
-  -- 1. полная перезаливка партиций: make_dl и make_pd
-  -- 2. заливка за период две недели от текущей даты: make_dl2 и make_pd2
+  -- Purpose : Р”Р»СЏ Р·Р°РіСЂСѓР·РєРё РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹С… С‚Р°Р±Р»РёС†, СЂР°РЅР¶РёСЂРѕРІР°РЅРЅС‹С… РїРѕ РґР°С‚Рµ РїР»Р°С‚РµР¶Р° - PAY_DATE
+  -- Р РµР°Р»РёР·РѕРІР°РЅС‹ РґРІРµ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹Рµ СЃС‚СЂР°С‚РµРіРёРё: 
+  -- 1. РїРѕР»РЅР°СЏ РїРµСЂРµР·Р°Р»РёРІРєР° РїР°СЂС‚РёС†РёР№: make_dl Рё make_pd
+  -- 2. Р·Р°Р»РёРІРєР° Р·Р° РїРµСЂРёРѕРґ РґРІРµ РЅРµРґРµР»Рё РѕС‚ С‚РµРєСѓС‰РµР№ РґР°С‚С‹: make_dl2 Рё make_pd2
 
   procedure make_pmpd; 
   procedure make_pmdl; 
@@ -45,7 +45,7 @@ create or replace package body load_tables is
         t.runtime = sysdate,
         t.end_time = '',
         t.state = 1,
-        t.info = 'Начата обработка'
+        t.info = 'РќР°С‡Р°С‚Р° РѕР±СЂР°Р±РѕС‚РєР°'
     Where t.table_name=itable_name;
     Commit;
   end init_log;
@@ -81,7 +81,7 @@ create or replace package body load_tables is
   cmd varchar2(1024);
   begin
     dbms_application_info.set_module('LOAD_TABLES','build index for '||itable_name);
-    log(itable_name, 'Начинаем перестройку индексов для '||itable_name);
+    log(itable_name, 'РќР°С‡РёРЅР°РµРј РїРµСЂРµСЃС‚СЂРѕР№РєСѓ РёРЅРґРµРєСЃРѕРІ РґР»СЏ '||itable_name);
 
     FOR current_index IN
     (
@@ -107,7 +107,7 @@ create or replace package body load_tables is
     )
     LOOP
 
-      log(current_index.index_name, 'Перестраиваем индекс',current_index.build_command);
+      log(current_index.index_name, 'РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃ',current_index.build_command);
       EXECUTE immediate current_index.build_command;
     END LOOP;
 
@@ -122,10 +122,10 @@ create or replace package body load_tables is
       execute immediate cmd;
     end loop;
 
-    log(itable_name,'Перестройка индексов для '||itable_name||' завершена');
+    log(itable_name,'РџРµСЂРµСЃС‚СЂРѕР№РєР° РёРЅРґРµРєСЃРѕРІ РґР»СЏ '||itable_name||' Р·Р°РІРµСЂС€РµРЅР°');
   end rebuild_indexes;
 
-  --Загрузка Virtual_Doc_List
+  --Р—Р°РіСЂСѓР·РєР° Virtual_Doc_List
   procedure reload_vdl(iv_table in varchar2)
   is
   v_cnt pls_integer default 0;
@@ -155,9 +155,9 @@ create or replace package body load_tables is
 --         'and   pd.pay_date>='''||to_char(reload_from,'dd.mm.yyyy')||'''';
 --*/
 
-    log(iv_table,'Открываем курсор для '||iv_table, cmd);
+    log(iv_table,'РћС‚РєСЂС‹РІР°РµРј РєСѓСЂСЃРѕСЂ РґР»СЏ '||iv_table, cmd);
     open all_vdl for cmd;
-    log(iv_table,'Начинаем загружать данные');
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ');
     cnt_rows:=0;
     v_cnt:=1;
 
@@ -165,7 +165,7 @@ create or replace package body load_tables is
     loop
       begin
         fetch all_vdl bulk collect into list_t_vdl limit 16000;
-        -- Загружаем Virtual_Doc_List
+        -- Р—Р°РіСЂСѓР¶Р°РµРј Virtual_Doc_List
         forall l_index in list_t_vdl.first .. list_t_vdl.last
             insert
 --            into virtual_doc_list(
@@ -199,7 +199,7 @@ create or replace package body load_tables is
     close all_vdl;
     list_t_vdl.delete;
 
-    log(iv_table, '---> Данные загружены', cnt_rows||' - записей' );
+    log(iv_table, '---> Р”Р°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶РµРЅС‹', cnt_rows||' - Р·Р°РїРёСЃРµР№' );
   end reload_vdl;
 
   procedure reload_pmdl(iv_table in varchar2)
@@ -251,7 +251,7 @@ create or replace package body load_tables is
   begin
     dbms_application_info.set_module('LOAD_TABLES','load '||iv_table);
     
-    -- В выходные дни делаем "глубокую" заливку данных с оскоком на 14 дней назад
+    -- Р’ РІС‹С…РѕРґРЅС‹Рµ РґРЅРё РґРµР»Р°РµРј "РіР»СѓР±РѕРєСѓСЋ" Р·Р°Р»РёРІРєСѓ РґР°РЅРЅС‹С… СЃ РѕСЃРєРѕРєРѕРј РЅР° 14 РґРЅРµР№ РЅР°Р·Р°Рґ
 /*    
     if week_day > 5 then
         cmd:='select dl.* '||
@@ -263,28 +263,28 @@ create or replace package body load_tables is
                               'where dl2.pay_date = pd.pay_date '||
                               'and   dl2.mhmh_id = pd.mhmh_id )';
     else
-        -- В рабочие дни делаем "неглубокую" заливку данных
+        -- Р’ СЂР°Р±РѕС‡РёРµ РґРЅРё РґРµР»Р°РµРј "РЅРµРіР»СѓР±РѕРєСѓСЋ" Р·Р°Р»РёРІРєСѓ РґР°РЅРЅС‹С…
         cmd:='select dl.* '||
              'from pmdl_doc_list@crtr  dl '||
              'where dl.pay_date>='''||to_char(reload_from,'dd.mm.yyyy')||'''';
     end if;
 */
-    -- В рабочие дни делаем "неглубокую" заливку данных
+    -- Р’ СЂР°Р±РѕС‡РёРµ РґРЅРё РґРµР»Р°РµРј "РЅРµРіР»СѓР±РѕРєСѓСЋ" Р·Р°Р»РёРІРєСѓ РґР°РЅРЅС‹С…
     cmd:='select /*+parallel(2)*/ pd.pay_date, dl.* '||
          'from loader.pmdl_doc_list dl, loader.pmpd_pay_doc pd '||
          'where pd.mhmh_id=dl.mhmh_id '||
          'and pd.pay_date>='''||to_char(reload_from,'dd.mm.yyyy')||''' ';
          
     
-    log(iv_table,'Открываем курсор для '||iv_table, cmd);
+    log(iv_table,'РћС‚РєСЂС‹РІР°РµРј РєСѓСЂСЃРѕСЂ РґР»СЏ '||iv_table, cmd);
     open all_pmdl for cmd;
-    log(iv_table,'Начинаем загружать данные');
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ');
     cnt_rows:=0;
 
     loop
       begin
         fetch all_pmdl bulk collect into list_t_pmdl limit 16000;
-        -- Загружаем PMDL_DOC_LIST
+        -- Р—Р°РіСЂСѓР¶Р°РµРј PMDL_DOC_LIST
 --/*
         forall l_index in list_t_pmdl.first .. list_t_pmdl.last
             insert
@@ -303,7 +303,7 @@ create or replace package body load_tables is
                     list_t_pmdl(l_index).rnn, list_t_pmdl(l_index).sicid, list_t_pmdl(l_index).rfem_id, list_t_pmdl(l_index).npf_id,
                     list_t_pmdl(l_index).oldsicid, list_t_pmdl(l_index).sicnull, list_t_pmdl(l_index).period);
 --*/
-        -- Загружаем PMDL_DOC_LIST_S
+        -- Р—Р°РіСЂСѓР¶Р°РµРј PMDL_DOC_LIST_S
         forall l_index in list_t_pmdl.first .. list_t_pmdl.last
             insert /*+APPEND*/
             into pmdl_doc_list_s(
@@ -328,7 +328,7 @@ create or replace package body load_tables is
     close all_pmdl;
     list_t_pmdl.delete;
 
-    log(iv_table, '---> Данные загружены', cnt_rows||' - записей' );
+    log(iv_table, '---> Р”Р°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶РµРЅС‹', cnt_rows||' - Р·Р°РїРёСЃРµР№' );
   end reload_pmdl;
 
   procedure reload_pmpd(iv_table in varchar2)
@@ -417,9 +417,9 @@ create or replace package body load_tables is
         'and pd.pay_date>='''||to_char(reload_from,'dd.mm.yyyy')||''' ';
 
     cnt_rows:=0;
-    log(iv_table,'Открываем курсор для '||iv_table, cmd);
+    log(iv_table,'РћС‚РєСЂС‹РІР°РµРј РєСѓСЂСЃРѕСЂ РґР»СЏ '||iv_table, cmd);
     open all_pmpd for cmd;
-    log(iv_table,'Начинаем загружать данные');
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ');
     loop
       begin
         fetch all_pmpd bulk collect into list_t_pmpd limit 16000;
@@ -504,7 +504,7 @@ create or replace package body load_tables is
     close all_pmpd;
     list_t_pmpd.delete;
 
-    log(iv_table, '---> Данные загружены', cnt_rows||' - записей' );
+    log(iv_table, '---> Р”Р°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶РµРЅС‹', cnt_rows||' - Р·Р°РїРёСЃРµР№' );
   end reload_pmpd;
 
   procedure reload_pnap(iv_table in varchar2)
@@ -548,14 +548,14 @@ create or replace package body load_tables is
           where   pn.act_month>=reload_from;
   --*/
   begin
-    log(iv_table,'Начинаем загружать данные');
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ');
     commit;
 
     open all_pnap;
     loop
       begin
         fetch all_pnap bulk collect into list_t_pnap limit 8192;
-        -- Загружаем PNAP_ACT_PRT
+        -- Р—Р°РіСЂСѓР¶Р°РµРј PNAP_ACT_PRT
         forall l_index in list_t_pnap.first .. list_t_pnap.last
             insert /*+APPEND*/
             into pnap_act_prt(
@@ -588,17 +588,17 @@ create or replace package body load_tables is
     close all_pnap;
     commit;
     list_t_pnap.delete;
-    log(iv_table, 'Загрузка данных завершена');
+    log(iv_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… Р·Р°РІРµСЂС€РµРЅР°');
     commit;
   end reload_pnap;
 
-  -- Атавизм, осталось для примера, работает медленней чем с коллекцией
-  -- Коллекция позволяет вставлять данные сразу в несколько таблиц
+  -- РђС‚Р°РІРёР·Рј, РѕСЃС‚Р°Р»РѕСЃСЊ РґР»СЏ РїСЂРёРјРµСЂР°, СЂР°Р±РѕС‚Р°РµС‚ РјРµРґР»РµРЅРЅРµР№ С‡РµРј СЃ РєРѕР»Р»РµРєС†РёРµР№
+  -- РљРѕР»Р»РµРєС†РёСЏ РїРѕР·РІРѕР»СЏРµС‚ РІСЃС‚Р°РІР»СЏС‚СЊ РґР°РЅРЅС‹Рµ СЃСЂР°Р·Сѓ РІ РЅРµСЃРєРѕР»СЊРєРѕ С‚Р°Р±Р»РёС†
   procedure reload_pmpd2(iv_table in varchar2, ilowest_value in date)
   is
   cmd varchar2(512);
   begin
-    log(iv_table,'Начинаем загружать данные в '||iv_table);
+    log(iv_table,'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР°РЅРЅС‹Рµ РІ '||iv_table);
 /*
     cmd:='INSERT
           INTO PMPD_PAY_DOC
@@ -620,14 +620,14 @@ create or replace package body load_tables is
 
     execute immediate cmd;
     commit;
-    log(iv_table, 'Загрузка данных завершена');
+    log(iv_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… Р·Р°РІРµСЂС€РµРЅР°');
   end reload_pmpd2;
 
   function trunc_partition(dtab_name varchar2, must_date out date)
     return pls_integer
   is
   begin
-    -- Отключим глоабльные индексы
+    -- РћС‚РєР»СЋС‡РёРј РіР»РѕР°Р±Р»СЊРЅС‹Рµ РёРЅРґРµРєСЃС‹
     for global_index in (select index_name
           from all_indexes
           where table_name = dtab_name
@@ -635,11 +635,11 @@ create or replace package body load_tables is
           and table_owner='SSWH'
         )
     loop
-      log(dtab_name, global_index.index_name, 'Отключение глобального индекса');
+      log(dtab_name, global_index.index_name, 'РћС‚РєР»СЋС‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РёРЅРґРµРєСЃР°');
       execute immediate 'alter index '||global_index.index_name||' unusable';
     end loop;
 
-    -- Обрежем партиции
+    -- РћР±СЂРµР¶РµРј РїР°СЂС‚РёС†РёРё
     FOR part IN ( SELECT  table_name, partition_name, high_value,
                   partition_position
         FROM user_tab_partitions t
@@ -650,17 +650,17 @@ create or replace package body load_tables is
       if  to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' ) > trunc(reload_from,'YEAR')
       then
         must_date:=to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' );
-        -- Отключаем партиционированный индекс, возвращается SQLCODE
-        -- Быстрей Truncate работает ?
+        -- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
+        -- Р‘С‹СЃС‚СЂРµР№ Truncate СЂР°Р±РѕС‚Р°РµС‚ ?
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
-        -- Чистим партиции
+        -- Р§РёСЃС‚РёРј РїР°СЂС‚РёС†РёРё
         log( part.table_name, 'TRUNCATE PARTITION', part.partition_name);
         execute immediate 'ALTER TABLE '||part.table_name||' TRUNCATE PARTITION '||part.partition_name||'';
-        -- После Truncate Index становится "USABLE" - фича или баг?
-        -- Повторно отключаем партиционированный индекс, возвращается SQLCODE
+        -- РџРѕСЃР»Рµ Truncate Index СЃС‚Р°РЅРѕРІРёС‚СЃСЏ "USABLE" - С„РёС‡Р° РёР»Рё Р±Р°Рі?
+        -- РџРѕРІС‚РѕСЂРЅРѕ РѕС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
             return 0;
         end if;
         log( part.table_name, 'SET UNUSABLE PARTITION',part.partition_name);
@@ -669,25 +669,25 @@ create or replace package body load_tables is
         exit;
       end if;
     END LOOP;
-    log ( dtab_name, 'TRUNCATE PARTITION', 'Будут загружаться строки с "PAY_DATE" >= '||to_char(must_date,'dd.mm.yyyy HH24:MI:SS'));
+    log ( dtab_name, 'TRUNCATE PARTITION', 'Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ СЃС‚СЂРѕРєРё СЃ "PAY_DATE" >= '||to_char(must_date,'dd.mm.yyyy HH24:MI:SS'));
     return 1;
   end trunc_partition;
 
   procedure delete_rows(dtab_name varchar2, icolumn_name in varchar2, idate in date)
     is
   begin
-    log ( dtab_name, 'Удаляем записи',' условие: '||upper(icolumn_name)||'" >= '||to_char(idate,'dd.mm.yyyy HH24:MI:SS'));
+    log ( dtab_name, 'РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃРё',' СѓСЃР»РѕРІРёРµ: '||upper(icolumn_name)||'" >= '||to_char(idate,'dd.mm.yyyy HH24:MI:SS'));
     cmd:='delete from '||dtab_name||' dt where dt.'||upper(icolumn_name)||' >= '''||to_date(idate,'dd.mm.yyyy')||'''';
     execute immediate cmd;
-    log ( dtab_name, '---> Записи удалены',sql%rowcount||' - записей');
+    log ( dtab_name, '---> Р—Р°РїРёСЃРё СѓРґР°Р»РµРЅС‹',sql%rowcount||' - Р·Р°РїРёСЃРµР№');
   end;
 
   function prepare_partition(dtab_name varchar2, icolumn_name in varchar2)
     return pls_integer
   is
   begin
-    log ( dtab_name, 'Подготовка Партиций');
-    -- Отключим глоабльные индексы
+    log ( dtab_name, 'РџРѕРґРіРѕС‚РѕРІРєР° РџР°СЂС‚РёС†РёР№');
+    -- РћС‚РєР»СЋС‡РёРј РіР»РѕР°Р±Р»СЊРЅС‹Рµ РёРЅРґРµРєСЃС‹
     for global_index in (select index_name
           from all_indexes
           where table_name = dtab_name
@@ -695,11 +695,11 @@ create or replace package body load_tables is
           and table_owner='SSWH'
         )
     loop
-      log(dtab_name, 'Отключаем глобальный индекс', global_index.index_name );
+      log(dtab_name, 'РћС‚РєР»СЋС‡Р°РµРј РіР»РѕР±Р°Р»СЊРЅС‹Р№ РёРЅРґРµРєСЃ', global_index.index_name );
       execute immediate 'alter index '||global_index.index_name||' unusable';
     end loop;
 
-    -- Отключим индексы партиций
+    -- РћС‚РєР»СЋС‡РёРј РёРЅРґРµРєСЃС‹ РїР°СЂС‚РёС†РёР№
     FOR part IN ( SELECT  table_name, partition_name, high_value,
                   partition_position
         FROM user_tab_partitions t
@@ -709,22 +709,22 @@ create or replace package body load_tables is
     LOOP
       if  to_date( substr(part.high_value,11,10), 'yyyy-mm-dd' ) > trunc(reload_from,'YEAR')
       then
-        -- Отключаем партиционированный индекс, возвращается SQLCODE
-        -- Быстрей Truncate работает ?
-        log( part.table_name, 'Отключаем партицию',part.partition_name);
+        -- РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹Р№ РёРЅРґРµРєСЃ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ SQLCODE
+        -- Р‘С‹СЃС‚СЂРµР№ Truncate СЂР°Р±РѕС‚Р°РµС‚ ?
+        log( part.table_name, 'РћС‚РєР»СЋС‡Р°РµРј РїР°СЂС‚РёС†РёСЋ',part.partition_name);
         execute immediate 'alter table '||part.table_name||' modify partition '||part.partition_name||' unusable local indexes';
         if SQLCODE>0 then
-            -- Ошибка, без отключенных индексов лучше таблицы не загружать
-            log ( dtab_name, 'Ошибка отключения партиций '||sqlcode);
+            -- РћС€РёР±РєР°, Р±РµР· РѕС‚РєР»СЋС‡РµРЅРЅС‹С… РёРЅРґРµРєСЃРѕРІ Р»СѓС‡С€Рµ С‚Р°Р±Р»РёС†С‹ РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
+            log ( dtab_name, 'РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ РїР°СЂС‚РёС†РёР№ '||sqlcode);
             return 0;
         end if;
       else
         exit;
       end if;
     END LOOP;
-    log ( dtab_name, 'Подготовка партиций завершена');
+    log ( dtab_name, 'РџРѕРґРіРѕС‚РѕРІРєР° РїР°СЂС‚РёС†РёР№ Р·Р°РІРµСЂС€РµРЅР°');
 
-    log ( dtab_name, 'Далее будут загружаться строки ', 'условие загрузки: '||upper(icolumn_name)||'" >= '||to_char(reload_from,'dd.mm.yyyy HH24:MI:SS'));
+    log ( dtab_name, 'Р”Р°Р»РµРµ Р±СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ СЃС‚СЂРѕРєРё ', 'СѓСЃР»РѕРІРёРµ Р·Р°РіСЂСѓР·РєРё: '||upper(icolumn_name)||'" >= '||to_char(reload_from,'dd.mm.yyyy HH24:MI:SS'));
     return 1;
   end prepare_partition;
 
@@ -733,92 +733,92 @@ create or replace package body load_tables is
     must_date date;
   begin
     --v_count_day:=365;
-    log(iv_table1,'Подготовка загрузки');
-    -- Выбираем нужную партицию, отключаем индексы
+    log(iv_table1,'РџРѕРґРіРѕС‚РѕРІРєР° Р·Р°РіСЂСѓР·РєРё');
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹
     if trunc_partition(iv_table1, must_date)=0
     then
       return;
     end if;
     reload_from:=must_date;
-    -- Загружаем сразу 2 таблицы
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
     reload_pnap(iv_table1);
-    -- Перестраиваем индексы
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_pnap;
 
   procedure make_pnap2(iv_table1 in varchar2)
   is
   begin
-    log(iv_table1,'Подготовка загрузки');
-    -- Выбираем нужную партицию, отключаем индексы и зачищаем партиции
+    log(iv_table1,'РџРѕРґРіРѕС‚РѕРІРєР° Р·Р°РіСЂСѓР·РєРё');
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ Рё Р·Р°С‡РёС‰Р°РµРј РїР°СЂС‚РёС†РёРё
     if prepare_partition(iv_table1, 'act_month')=0
     then
       return;
     end if;
-    -- Загружаем сразу 2 таблицы
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
     reload_pnap(iv_table1);
-    -- Перестраиваем индексы
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
-    -- Загрузка PNAP_ACT_PRT
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
+    -- Р—Р°РіСЂСѓР·РєР° PNAP_ACT_PRT
   end make_pnap2;
 
   procedure make_dl(iv_table1 in varchar2, iv_table2 in varchar2)
   is
     must_date date;
   begin
-    -- Загрузка PMDL_DOC_LIST
-    log(iv_table1,'+++ Будут загружаться таблицы '||upper(iv_table1)||' и '||upper(iv_table2)||' по разделам');
+    -- Р—Р°РіСЂСѓР·РєР° PMDL_DOC_LIST
+    log(iv_table1,'+++ Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ С‚Р°Р±Р»РёС†С‹ '||upper(iv_table1)||' Рё '||upper(iv_table2)||' РїРѕ СЂР°Р·РґРµР»Р°Рј');
     if trunc_partition(iv_table1, must_date)=0
     or trunc_partition(iv_table2, must_date)=0
     then
       return;
     end if;
     reload_from:=must_date;
-    -- Загружаем сразу 2 таблицы
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
     reload_pmdl(iv_table1);
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
     
     rebuild_indexes(iv_table2);
-    log(iv_table2, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);       
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table2, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);       
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_dl;
 
-  -- Загружать будем сразу 2 таблицы,
-  -- однако индексы перестраивать будем отдельно по каждой таблице
-  -- Загрузка PMPD_PAY_DOC2 и PMPD_PAY_DOC2_S
+  -- Р—Р°РіСЂСѓР¶Р°С‚СЊ Р±СѓРґРµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹,
+  -- РѕРґРЅР°РєРѕ РёРЅРґРµРєСЃС‹ РїРµСЂРµСЃС‚СЂР°РёРІР°С‚СЊ Р±СѓРґРµРј РѕС‚РґРµР»СЊРЅРѕ РїРѕ РєР°Р¶РґРѕР№ С‚Р°Р±Р»РёС†Рµ
+  -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC2 Рё PMPD_PAY_DOC2_S
   procedure make_pd(iv_table1 in varchar2, iv_table2 in varchar2)
   is
     must_date date;
   begin
-    log(iv_table1,'+++ Будут загружаться таблицы '||upper(iv_table1)||' и '||upper(iv_table2)||' по разделам');
-    -- Выбираем нужную партицию, отключаем индексы и зачищаем партиции
+    log(iv_table1,'+++ Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ С‚Р°Р±Р»РёС†С‹ '||upper(iv_table1)||' Рё '||upper(iv_table2)||' РїРѕ СЂР°Р·РґРµР»Р°Рј');
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ Рё Р·Р°С‡РёС‰Р°РµРј РїР°СЂС‚РёС†РёРё
     if trunc_partition(iv_table1, must_date)=0
     or trunc_partition(iv_table2, must_date)=0
     then
       return;
     end if;
     reload_from:=must_date;
-    -- Загружаем сразу 2 таблицы
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
     reload_pmpd(iv_table1);
-    -- Перестраиваем индексы
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
     rebuild_indexes(iv_table2);
-    log(iv_table2, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table2, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_pd;
 
   procedure make_pd2(iv_table1 in varchar2, iv_table2 in varchar2)
   is
   begin
-    log(iv_table1,'+++ Будут загружаться таблицы '||upper(iv_table1)||' и '||upper(iv_table2)||' по диапазону дат');
-    -- Выбираем нужную партицию, отключаем индексы и зачищаем партиции
+    log(iv_table1,'+++ Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ С‚Р°Р±Р»РёС†С‹ '||upper(iv_table1)||' Рё '||upper(iv_table2)||' РїРѕ РґРёР°РїР°Р·РѕРЅСѓ РґР°С‚');
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ Рё Р·Р°С‡РёС‰Р°РµРј РїР°СЂС‚РёС†РёРё
 --    /*
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'delete rows from '||reload_from);
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'delete rows from '||reload_from);
 
     if week_day < 8 then
 --    if week_day < 6 then
@@ -831,29 +831,29 @@ create or replace package body load_tables is
       delete_rows(iv_table2, 'PAY_DATE', reload_from);
     end if;
 --    */
-    -- Загружаем сразу 2 таблицы
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'load rows from '||reload_from);
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'load rows from '||reload_from);
     reload_pmpd(iv_table1);
     
-    -- Перестраиваем индексы
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'rebuild indexes');
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'rebuild indexes');
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);
     
     rebuild_indexes(iv_table2);
-    log(iv_table2, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table2, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_pd2;
 
   procedure make_dl2(iv_table1 in varchar2, iv_table2 in varchar2)
   is
   begin
-    log(iv_table1,'+++ Будут загружаться таблицы '||upper(iv_table1)||' и '||upper(iv_table2)||' по диапазону дат');
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'delete rows from '||reload_from);
+    log(iv_table1,'+++ Р‘СѓРґСѓС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ С‚Р°Р±Р»РёС†С‹ '||upper(iv_table1)||' Рё '||upper(iv_table2)||' РїРѕ РґРёР°РїР°Р·РѕРЅСѓ РґР°С‚');
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'delete rows from '||reload_from);
     
     if week_day < 8 then
 --    if week_day < 6 then
-    -- Выбираем нужную партицию, отключаем индексы и удаляем записи за "v_count_day" последних дней
+    -- Р’С‹Р±РёСЂР°РµРј РЅСѓР¶РЅСѓСЋ РїР°СЂС‚РёС†РёСЋ, РѕС‚РєР»СЋС‡Р°РµРј РёРЅРґРµРєСЃС‹ Рё СѓРґР°Р»СЏРµРј Р·Р°РїРёСЃРё Р·Р° "v_count_day" РїРѕСЃР»РµРґРЅРёС… РґРЅРµР№
         if prepare_partition(iv_table1, 'PAY_DATE')=0
         or prepare_partition(iv_table2, 'PAY_DATE')=0
         then
@@ -862,35 +862,35 @@ create or replace package body load_tables is
         delete_rows(iv_table1, 'PAY_DATE', reload_from);
         delete_rows(iv_table2, 'PAY_DATE', reload_from);
     end if;
-    -- Загружаем сразу 2 таблицы
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'load rows from '||reload_from);
+    -- Р—Р°РіСЂСѓР¶Р°РµРј СЃСЂР°Р·Сѓ 2 С‚Р°Р±Р»РёС†С‹
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'load rows from '||reload_from);
     reload_pmdl(iv_table1);
 
-    -- Перестраиваем индексы
-    dbms_application_info.set_module('Загрузка таблиц '||iv_table1, 'rebuild indexes');
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
+    dbms_application_info.set_module('Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС† '||iv_table1, 'rebuild indexes');
     rebuild_indexes(iv_table1);
-    log(iv_table1, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
+    log(iv_table1, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
     
     rebuild_indexes(iv_table2);
-    log(iv_table2, '=====>  Заливка таблицы завершена', 'Загружено записей: '||cnt_rows);   
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table2, '=====>  Р—Р°Р»РёРІРєР° С‚Р°Р±Р»РёС†С‹ Р·Р°РІРµСЂС€РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);   
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_dl2;
 
   procedure make_vdl(iv_table1 in varchar2)
   is
   begin
-    log(iv_table1,'+++ Будет загружаться таблица '||upper(iv_table1)||' по диапазону дат');
+    log(iv_table1,'+++ Р‘СѓРґРµС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ С‚Р°Р±Р»РёС†Р° '||upper(iv_table1)||' РїРѕ РґРёР°РїР°Р·РѕРЅСѓ РґР°С‚');
 --    delete_rows(iv_table1, 'PAY_DATE_GFSS', reload_from);
 
     reload_vdl(iv_table1);
-    -- Перестраиваем индексы
+    -- РџРµСЂРµСЃС‚СЂР°РёРІР°РµРј РёРЅРґРµРєСЃС‹
     rebuild_indexes(iv_table1);
-    log(iv_table1,'+++ Таблица '||upper(iv_table1)||' загружена', 'Загружено записей: '||cnt_rows);
-    -- Загрузка PMPD_PAY_DOC
+    log(iv_table1,'+++ РўР°Р±Р»РёС†Р° '||upper(iv_table1)||' Р·Р°РіСЂСѓР¶РµРЅР°', 'Р—Р°РіСЂСѓР¶РµРЅРѕ Р·Р°РїРёСЃРµР№: '||cnt_rows);
+    -- Р—Р°РіСЂСѓР·РєР° PMPD_PAY_DOC
   end make_vdl;
 
-  -- Только для секционированных по рангу таблиц
-  -- Ранг - это столбец с полем Дата
+  -- РўРѕР»СЊРєРѕ РґР»СЏ СЃРµРєС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹С… РїРѕ СЂР°РЅРіСѓ С‚Р°Р±Р»РёС†
+  -- Р Р°РЅРі - СЌС‚Рѕ СЃС‚РѕР»Р±РµС† СЃ РїРѕР»РµРј Р”Р°С‚Р°
   procedure make_pmdl
   is
   v_table varchar2(64);
@@ -900,17 +900,17 @@ create or replace package body load_tables is
 
     v_table := 'PMDL_DOC_LIST';
     if set_days_reload(v_table)=1 then
-        log( v_table, 'Загрузка данных уже выполняется ...');
+        log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ ...');
     else
         if trunc(v_last_success_date) = trunc(sysdate) 
         then
-            log( v_table, 'Загрузка данных уже выполнена');
+            log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅРµРЅР°');
         else
-            -- 1. Загружается за период 
+            -- 1. Р—Р°РіСЂСѓР¶Р°РµС‚СЃСЏ Р·Р° РїРµСЂРёРѕРґ 
             init_log(v_table);    
             make_dl2(v_table, 'PMDL_DOC_LIST_S');
             stop_log(v_table);
-            -- 2. Альтернатива - загружается вся партиция
+            -- 2. РђР»СЊС‚РµСЂРЅР°С‚РёРІР° - Р·Р°РіСЂСѓР¶Р°РµС‚СЃСЏ РІСЃСЏ РїР°СЂС‚РёС†РёСЏ
             -- make_dl(v_table, 'PMDL_DOC_LIST2_S');
         end if;
     end if;
@@ -921,15 +921,15 @@ create or replace package body load_tables is
       begin
           Rollback;
           e_errm:=sqlerrm;
-          log( v_table, '! Ошибка', e_errm);
+          log( v_table, '! РћС€РёР±РєР°', e_errm);
           Update load_tables_status t Set t.end_time = Sysdate, t.state=100, info = e_errm
           Where t.table_name = v_table;
           Commit;
       end;
   end make_pmdl;
 
-  -- Только для секционированных по рангу таблиц
-  -- Ранг - это столбец с полем Дата
+  -- РўРѕР»СЊРєРѕ РґР»СЏ СЃРµРєС†РёРѕРЅРёСЂРѕРІР°РЅРЅС‹С… РїРѕ СЂР°РЅРіСѓ С‚Р°Р±Р»РёС†
+  -- Р Р°РЅРі - СЌС‚Рѕ СЃС‚РѕР»Р±РµС† СЃ РїРѕР»РµРј Р”Р°С‚Р°
   procedure make_pmpd
   is
   v_table varchar2(64);
@@ -939,17 +939,17 @@ create or replace package body load_tables is
 
     v_table := 'PMPD_PAY_DOC';
     if set_days_reload(v_table)=1 then
-        log( v_table, 'Загрузка данных уже выполняется ...');
+        log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ ...');
     else
         if trunc(v_last_success_date) = trunc(sysdate)
         then
-            log( v_table, 'Загрузка данных уже выполнена');
+            log( v_table, 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… СѓР¶Рµ РІС‹РїРѕР»РЅРµРЅР°');
         else
-            -- 1. Загружается за период 
+            -- 1. Р—Р°РіСЂСѓР¶Р°РµС‚СЃСЏ Р·Р° РїРµСЂРёРѕРґ 
             init_log(v_table);    
             make_pd2(v_table, 'PMPD_PAY_DOC_S');
             stop_log(v_table);
-            -- 2. Альтернатива - Загружается вся партиция
+            -- 2. РђР»СЊС‚РµСЂРЅР°С‚РёРІР° - Р—Р°РіСЂСѓР¶Р°РµС‚СЃСЏ РІСЃСЏ РїР°СЂС‚РёС†РёСЏ
             -- make_pd(v_table, 'PMPD_PAY_DOC2_S');
         end if;
     end if;
@@ -959,7 +959,7 @@ create or replace package body load_tables is
       begin
           Rollback;
           e_errm:=sqlerrm;
-          log( v_table, '! Ошибка', e_errm);
+          log( v_table, '! РћС€РёР±РєР°', e_errm);
           Update load_tables_status t Set t.end_time = Sysdate, t.state=100, info = e_errm
           Where t.table_name = v_table;
           Commit;

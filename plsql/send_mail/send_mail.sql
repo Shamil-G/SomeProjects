@@ -13,7 +13,7 @@ AS
   nls_charset varchar2(16);
   l_user varchar2(64) default '42500@gfss.kz';
   l_pass varchar2(64) default 'Gfss2020!@';
-  l_subject varchar2(128) default 'Робот по обращениям 42500';
+  l_subject varchar2(128) default 'Р РѕР±РѕС‚ РїРѕ РѕР±СЂР°С‰РµРЅРёСЏРј 42500';
   l_reply UTL_SMTP.REPLY;
   l_replies UTL_SMTP.REPLIES;
 BEGIN

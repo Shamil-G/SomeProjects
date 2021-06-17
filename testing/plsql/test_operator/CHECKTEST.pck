@@ -89,12 +89,12 @@ end;
 procedure checkSingleTest(exam_row in dbo.exam%rowtype)
 is
 v_result simple_integer:=0;
-already_count_success simple_integer:=0; --кол-во успешных ответов
-was_count_success simple_integer:=0; --кол-во успешных ответов
-v_base   simple_integer:=0; --проходной балл
-v_cnt    simple_integer:=0; --кол-во вопросов
-v_ans    simple_integer:=0; --кол-во правильных ответов
-v_passed simple_integer:=0; --пройден ли тест
+already_count_success simple_integer:=0; --РєРѕР»-РІРѕ СѓСЃРїРµС€РЅС‹С… РѕС‚РІРµС‚РѕРІ
+was_count_success simple_integer:=0; --РєРѕР»-РІРѕ СѓСЃРїРµС€РЅС‹С… РѕС‚РІРµС‚РѕРІ
+v_base   simple_integer:=0; --РїСЂРѕС…РѕРґРЅРѕР№ Р±Р°Р»Р»
+v_cnt    simple_integer:=0; --РєРѕР»-РІРѕ РІРѕРїСЂРѕСЃРѕРІ
+v_ans    simple_integer:=0; --РєРѕР»-РІРѕ РїСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ
+v_passed simple_integer:=0; --РїСЂРѕР№РґРµРЅ Р»Рё С‚РµСЃС‚
 array_size   simple_integer:=0;
 target_size  simple_integer:=0;
 order_num    simple_integer:=0;
@@ -139,7 +139,7 @@ begin
       order_number:=order_number+1;
     end loop;
     rollback;
-    sec_ctx.log2(iname=>'Иванов И', iip_addr=>sys_context('userenv','ip_address', 15),
+    sec_ctx.log2(iname=>'РРІР°РЅРѕРІ Р', iip_addr=>sys_context('userenv','ip_address', 15),
                              iid_region=>0, iid_person=>0,
                              imessage =>' Ok! now success_point: '||already_count_success||
                                       ', min_point: '||v_base
@@ -153,7 +153,7 @@ begin
   for cur in ( select * from dbo.exam e where e.idreg=iid_reg )
   loop
     if cur.ans<cur.ayes then
-      sec_ctx.log2(iname=>'Иванов И',
+      sec_ctx.log2(iname=>'РРІР°РЅРѕРІ Р',
                   iip_addr=>sys_context('userenv','ip_address', 15),
                   iid_region=>0,
                   iid_person=>0,

@@ -100,7 +100,7 @@ for CUR in  ( SELECT test_operator.helper.getCompactFIO(r.id_person) fio
               where r.id_organization=iid_organization
               and   trunc(r.date_testing,'day')>=idate_beg_testing
               and   trunc(r.date_testing,'day')<=idate_end_testing
-              and   r.status in ('Íåÿâêà','Ãîòîâ')
+              and   r.status in ('ĞĞµÑĞ²ĞºĞ°','Ğ“Ğ¾Ñ‚Ğ¾Ğ²')
             )  
 loop
   v_result:=v_result||cur.fio ||',';

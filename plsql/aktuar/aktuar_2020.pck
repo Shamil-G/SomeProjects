@@ -1,8 +1,8 @@
 create or replace package aktuar_2020 is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 11.08.2020 15:00:47
-  -- Purpose : Проведение актуарных расчетов
+  -- Purpose : РџСЂРѕРІРµРґРµРЅРёРµ Р°РєС‚СѓР°СЂРЅС‹С… СЂР°СЃС‡РµС‚РѕРІ
   
   --0705
   procedure proc_childcare(iid_calc pls_integer, idate date);
@@ -36,7 +36,7 @@ create or replace package body aktuar_2020 is
        days   pls_integer
   );
 */
-  -- Работать будем со списком
+  -- Р Р°Р±РѕС‚Р°С‚СЊ Р±СѓРґРµРј СЃРѕ СЃРїРёСЃРєРѕРј
   TYPE My_Cursor  IS REF CURSOR;
   type aktuar_dependant_t is record(
        row_number   number,
@@ -228,8 +228,8 @@ create or replace package body aktuar_2020 is
       begin
           v_coeff:=get_coeff(cnt_bw,cnt_bw-l_index+1);
 
---          if cnt_bw=l_index+1 then --  Предпоследняя запись
---          if cnt_bw!=l_index then --  Предпоследняя запись
+--          if cnt_bw=l_index+1 then --  РџСЂРµРґРїРѕСЃР»РµРґРЅСЏСЏ Р·Р°РїРёСЃСЊ
+--          if cnt_bw!=l_index then --  РџСЂРµРґРїРѕСЃР»РµРґРЅСЏСЏ Р·Р°РїРёСЃСЊ
           v_get_23_date:=get_23_date(table_aktuar_dependant(l_index).depend_birthdate, v_max_age);
           if cnt_bw=l_index then
               v_days:=get_days(  case
@@ -314,71 +314,71 @@ create or replace package body aktuar_2020 is
                                         );
 
 --*/
-/*  Формула в Excel для одного иждивенца
-    =N8* -- =1 если выплата на одного
-    $Y8*12*H8*  -- Y -  проверка по датам, что выплата действительна, H-  назначенная сумма в месяц
-    (L8-Summary!$B$30)/365,25 -- кол-во дней от даты расчета до даты закрытия выплаты
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РґР»СЏ РѕРґРЅРѕРіРѕ РёР¶РґРёРІРµРЅС†Р°
+    =N8* -- =1 РµСЃР»Рё РІС‹РїР»Р°С‚Р° РЅР° РѕРґРЅРѕРіРѕ
+    $Y8*12*H8*  -- Y -  РїСЂРѕРІРµСЂРєР° РїРѕ РґР°С‚Р°Рј, С‡С‚Рѕ РІС‹РїР»Р°С‚Р° РґРµР№СЃС‚РІРёС‚РµР»СЊРЅР°, H-  РЅР°Р·РЅР°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° РІ РјРµСЃСЏС†
+    (L8-Summary!$B$30)/365,25 -- РєРѕР»-РІРѕ РґРЅРµР№ РѕС‚ РґР°С‚С‹ СЂР°СЃС‡РµС‚Р° РґРѕ РґР°С‚С‹ Р·Р°РєСЂС‹С‚РёСЏ РІС‹РїР»Р°С‚С‹
 */
-/*  Формула в Excel для двух иждивенца
-    =P19537* -- =1 если выплата на двоих
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РґР»СЏ РґРІСѓС… РёР¶РґРёРІРµРЅС†Р°
+    =P19537* -- =1 РµСЃР»Рё РІС‹РїР»Р°С‚Р° РЅР° РґРІРѕРёС…
     $Y19537*12*$H19537*
-    (($L19537-Summary!$B$30)+ -- кол-во дней от даты расчета до даты закрытия выплаты
+    (($L19537-Summary!$B$30)+ -- РєРѕР»-РІРѕ РґРЅРµР№ РѕС‚ РґР°С‚С‹ СЂР°СЃС‡РµС‚Р° РґРѕ РґР°С‚С‹ Р·Р°РєСЂС‹С‚РёСЏ РІС‹РїР»Р°С‚С‹
     (5/6,5)*
-    МАКС(($K19538+$B$1*365,25-$L19537);0))/365,25 -- K- дата рождения иждивенца второго иждивенца  В- до скольки лет он может быть иждивецем (23 года)
+    РњРђРљРЎ(($K19538+$B$1*365,25-$L19537);0))/365,25 -- K- РґР°С‚Р° СЂРѕР¶РґРµРЅРёСЏ РёР¶РґРёРІРµРЅС†Р° РІС‚РѕСЂРѕРіРѕ РёР¶РґРёРІРµРЅС†Р°  Р’- РґРѕ СЃРєРѕР»СЊРєРё Р»РµС‚ РѕРЅ РјРѕР¶РµС‚ Р±С‹С‚СЊ РёР¶РґРёРІРµС†РµРј (23 РіРѕРґР°)
 */
-/*  Формула в Excel на трех иждивенцев
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° С‚СЂРµС… РёР¶РґРёРІРµРЅС†РµРІ
     =Q37766*
     $Y37766*12*$H37766*
     (($L37766-Summary!$B$30)+
     (6,5/8)*
-    МАКС(($K37767+$B$1*365,25-$L37766);0)+
+    РњРђРљРЎ(($K37767+$B$1*365,25-$L37766);0)+
     (5/8)*($K37768-$K37767))/365,25
 */
-/*  Формула в Excel на четырех иждивенцев
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° С‡РµС‚С‹СЂРµС… РёР¶РґРёРІРµРЅС†РµРІ
     =R48033*
     $Y48033*12*$H48033*
     (($L48033-Summary!$B$30)+
     (8/10)*
-    МАКС(($K48034+$B$1*365,25-$L48033);0)+
+    РњРђРљРЎ(($K48034+$B$1*365,25-$L48033);0)+
     (6,5/10)*($K48035-$K48034)+
     (5/10)*($K48036-$K48035))/365,25
 */
-/*  Формула в Excel на пятерых иждивенцев
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° РїСЏС‚РµСЂС‹С… РёР¶РґРёРІРµРЅС†РµРІ
     =S48037*
     $Y48037*12*$H48037*
     (($L48037-Summary!$B$30)+
     (10/10)*
-    МАКС(($K48038+$B$1*365,25-$L48037);0)+
+    РњРђРљРЎ(($K48038+$B$1*365,25-$L48037);0)+
     (8/10)*($K48039-$K48038)+
     (6,5/10)*($K48040-$K48039)+
     (5/10)*($K48041-$K48040))/365,25
 */
-/*  Формула в Excel на шестерых иждивенцев
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° С€РµСЃС‚РµСЂС‹С… РёР¶РґРёРІРµРЅС†РµРІ
     =T48063*
     $Y48063*12*$H48063*
     (($L48063-Summary!$B$30)+
-    (10/10)*МАКС(($K48064+$B$1*365,25-$L48063);0)+
+    (10/10)*РњРђРљРЎ(($K48064+$B$1*365,25-$L48063);0)+
     (10/10)*($K48065-$K48064)+
     (8/10)*($K48066-$K48065)+
     (6,5/10)*($K48067-$K48066)+
     (5/10)*($K48068-$K48067))/365,25
 */
-/*  Формула в Excel на семерых иждивенцев
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° СЃРµРјРµСЂС‹С… РёР¶РґРёРІРµРЅС†РµРІ
     =U48355*
     $Y48355*12*$H48355*
     (($L48355-Summary!$B$30)+
-    (10/10)*МАКС(($K48356+$B$1*365,25-$L48355);0)+
+    (10/10)*РњРђРљРЎ(($K48356+$B$1*365,25-$L48355);0)+
     (10/10)*($K48357-$K48356)+
     (10/10)*($K48358-$K48357)+
     (8/10)*($K48359-$K48358)+
     (6,5/10)*($K48360-$K48359)+
     (5/10)*($K48361-$K48360))/365,25
 */
-/*  Формула в Excel на вомьмерых иждивенцев, sicid=3089421
+/*  Р¤РѕСЂРјСѓР»Р° РІ Excel РЅР° РІРѕРјСЊРјРµСЂС‹С… РёР¶РґРёРІРµРЅС†РµРІ, sicid=3089421
     =V48847*
     $Y48847*12*$H48847*
     (($L48847-Summary!$B$30)+
-    (10/10)*МАКС(($K48848+$B$1*365,25-$L48847);0)+
+    (10/10)*РњРђРљРЎ(($K48848+$B$1*365,25-$L48847);0)+
     (10/10)*($K48849-$K48848)+
     (10/10)*($K48850-$K48849)+
     (10/10)*($K48851-$K48850)+
@@ -414,7 +414,7 @@ create or replace package body aktuar_2020 is
   begin
     all_summ:=0;
     cnt:=0;
-    log('0701: Начало работы: '||v_rfpm);
+    log('0701: РќР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹: '||v_rfpm);
     dbms_application_info.set_module('aktuar_2020','get_result_BW_1');
     for cur in ( select unique ad.pnpt_id, ad.stopdate date_stop 
                  from sswh.aktuar_dependant ad 
@@ -426,7 +426,7 @@ create or replace package body aktuar_2020 is
         cnt:=cnt+1;
         cnt_all:=cnt_all+1;
         if cnt>1023 then
-           dbms_application_info.set_module('aktuar_2020','get_result_BW_1: '||cnt_all||' дел');
+           dbms_application_info.set_module('aktuar_2020','get_result_BW_1: '||cnt_all||' РґРµР»');
            cnt:=0;
         end if;
         curr_summ:=coalesce(aktuar_2020.bread_winner(cur.pnpt_id),0);
@@ -434,11 +434,11 @@ create or replace package body aktuar_2020 is
 
         print_line(iid_calc, '1',cur.pnpt_id, v_rfpm, curr_summ, cur.date_stop);
       exception when others then
-          log('Aktuar_2020, get_result_BW_1, Ощибка. pnpt_id: '||cur.pnpt_id);
+          log('Aktuar_2020, get_result_BW_1, РћС‰РёР±РєР°. pnpt_id: '||cur.pnpt_id);
           raise_application_error(-20000, 'get_result_BW_1, pnpt_id: '||cur.pnpt_id||' : '||sqlerrm);
       end;
     end loop;
-    log('0701: Завершен расчет по: '||v_rfpm||', Дел: '||cnt_all||', Сумма: '||all_summ);
+    log('0701: Р—Р°РІРµСЂС€РµРЅ СЂР°СЃС‡РµС‚ РїРѕ: '||v_rfpm||', Р”РµР»: '||cnt_all||', РЎСѓРјРјР°: '||all_summ);
   end get_result_BW_1;
 
 
@@ -451,7 +451,7 @@ create or replace package body aktuar_2020 is
   begin
     all_summ:=0;
     cnt:=0;
-    log('0701: Начало работы: '||v_rfpm);
+    log('0701: РќР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹: '||v_rfpm);
     dbms_application_info.set_module('aktuar_2020','get_result_BW_2');
     for cur in ( select unique ad.pnpt_id, max(ad.stopdate) date_stop 
                  from sswh.aktuar_dependant ad 
@@ -464,7 +464,7 @@ create or replace package body aktuar_2020 is
         cnt:=cnt+1;
         cnt_all:=cnt_all+1;
         if cnt>1023 then
-           dbms_application_info.set_module('aktuar_2020','get_result_BW_2: '||cnt_all||' дел');
+           dbms_application_info.set_module('aktuar_2020','get_result_BW_2: '||cnt_all||' РґРµР»');
            cnt:=0;
         end if;
         curr_summ:=coalesce(aktuar_2020.bread_winner(cur.pnpt_id),0);
@@ -472,11 +472,11 @@ create or replace package body aktuar_2020 is
 
         print_line(iid_calc, '2', cur.pnpt_id, '07010102', curr_summ, cur.date_stop);
       exception when others then
-          log('Aktuar_2020, get_result_BW_2, Ощибка. pnpt_id: '||cur.pnpt_id);
+          log('Aktuar_2020, get_result_BW_2, РћС‰РёР±РєР°. pnpt_id: '||cur.pnpt_id);
           raise_application_error(-20000, 'get_result_BW_2, pnpt_id: '||cur.pnpt_id||' : '||sqlerrm);
       end;
     end loop;
-    log('0701: Завершен расчет по: '||v_rfpm||', Дел: '||cnt_all||', Сумма: '||all_summ);
+    log('0701: Р—Р°РІРµСЂС€РµРЅ СЂР°СЃС‡РµС‚ РїРѕ: '||v_rfpm||', Р”РµР»: '||cnt_all||', РЎСѓРјРјР°: '||all_summ);
   end get_result_BW_2;
 
 
@@ -489,7 +489,7 @@ create or replace package body aktuar_2020 is
   begin
     all_summ:=0;
     cnt:=0;
-    log('0701: Начало работы: '||v_rfpm);
+    log('0701: РќР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹: '||v_rfpm);
     dbms_application_info.set_module('aktuar_2020','get_result_BW_3');
     for cur in ( select unique ad.pnpt_id, max(ad.stopdate) date_stop 
                  from sswh.aktuar_dependant ad 
@@ -502,7 +502,7 @@ create or replace package body aktuar_2020 is
         cnt:=cnt+1;
         cnt_all:=cnt_all+1;
         if cnt>1023 then
-           dbms_application_info.set_module('aktuar_2020','get_result_BW_3: '||cnt_all||' дел');
+           dbms_application_info.set_module('aktuar_2020','get_result_BW_3: '||cnt_all||' РґРµР»');
            cnt:=0;
         end if;
         curr_summ:=coalesce(aktuar_2020.bread_winner(cur.pnpt_id),0);
@@ -510,11 +510,11 @@ create or replace package body aktuar_2020 is
 
         print_line(iid_calc, '3', cur.pnpt_id, '07010103', curr_summ, cur.date_stop);
       exception when others then
-          log('aktuar_2020, get_result_BW_3, Ошибка. pnpt_id: '||cur.pnpt_id);
+          log('aktuar_2020, get_result_BW_3, РћС€РёР±РєР°. pnpt_id: '||cur.pnpt_id);
           raise_application_error(-20000, 'get_result__BW_3, pnpt_id: '||cur.pnpt_id||' : '||sqlerrm);
       end;
     end loop;
-    log('0701: Завершен расчет по: '||v_rfpm||', Дел: '||cnt_all||', Сумма: '||all_summ);
+    log('0701: Р—Р°РІРµСЂС€РµРЅ СЂР°СЃС‡РµС‚ РїРѕ: '||v_rfpm||', Р”РµР»: '||cnt_all||', РЎСѓРјРјР°: '||all_summ);
   end get_result_BW_3;
 
   procedure get_result_BW_4(iid_calc pls_integer)
@@ -526,7 +526,7 @@ create or replace package body aktuar_2020 is
   begin
     all_summ:=0;
     cnt:=0;
-    log('0701: Начало работы: '||v_rfpm);
+    log('0701: РќР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹: '||v_rfpm);
     dbms_application_info.set_module('aktuar_2020','get_result_BW_4');
     for cur in ( select unique ad.pnpt_id, max(ad.stopdate) date_stop 
                  from sswh.aktuar_dependant ad 
@@ -539,7 +539,7 @@ create or replace package body aktuar_2020 is
         cnt:=cnt+1;
         cnt_all:=cnt_all+1;
         if cnt>1023 then
-           dbms_application_info.set_module('aktuar_2020','get_result_BW_4: '||cnt_all||' дел');
+           dbms_application_info.set_module('aktuar_2020','get_result_BW_4: '||cnt_all||' РґРµР»');
            cnt:=0;
         end if;
         curr_summ:=coalesce(aktuar_2020.bread_winner(cur.pnpt_id),0);
@@ -547,11 +547,11 @@ create or replace package body aktuar_2020 is
 
         print_line(iid_calc, '4', cur.pnpt_id, '07010104', curr_summ, cur.date_stop);
       exception when others then
-          log('Aktuar_2020, get_result_BW_4, Ощибка. pnpt_id: '||cur.pnpt_id);
+          log('Aktuar_2020, get_result_BW_4, РћС‰РёР±РєР°. pnpt_id: '||cur.pnpt_id);
           raise_application_error(-20000, 'get_result_BW_4, pnpt_id: '||cur.pnpt_id||' : '||sqlerrm);
       end;
     end loop;
-    log('0701: Завершен расчет по: '||v_rfpm||', Дел: '||cnt_all||', Сумма: '||all_summ);
+    log('0701: Р—Р°РІРµСЂС€РµРЅ СЂР°СЃС‡РµС‚ РїРѕ: '||v_rfpm||', Р”РµР»: '||cnt_all||', РЎСѓРјРјР°: '||all_summ);
   end get_result_BW_4;
 
 
@@ -564,18 +564,18 @@ create or replace package body aktuar_2020 is
      result                     number(10,7);
   begin
     /*
-      ЕСЛИ(  C8=1; (
-                  ВПР(T8;com;6) - ВПР(T8+V8;com;6) --T8: age_valuation, V8: сколько лет до пенсии с округлением вверх
+      Р•РЎР›Р(  C8=1; (
+                  Р’РџР (T8;com;6) - Р’РџР (T8+V8;com;6) --T8: age_valuation, V8: СЃРєРѕР»СЊРєРѕ Р»РµС‚ РґРѕ РїРµРЅСЃРёРё СЃ РѕРєСЂСѓРіР»РµРЅРёРµРј РІРІРµСЂС…
                   )
                   /
-                  ВПР(T8;com;4);
-            ЕСЛИ ( C8=0;
+                  Р’РџР (T8;com;4);
+            Р•РЎР›Р ( C8=0;
                       (
-                        ВПР(T8;com;7)-
-                        ВПР(T8+V8;com;7)
+                        Р’РџР (T8;com;7)-
+                        Р’РџР (T8+V8;com;7)
                       )
                       /
-                      ВПР(T8;com;5);"Error"
+                      Р’РџР (T8;com;5);"Error"
                 )
           )
     */
@@ -655,7 +655,7 @@ create or replace package body aktuar_2020 is
     return result;
   end get_expect_duration_live;
 
-  --утрата трудоспособности с таблицей смертности
+  --СѓС‚СЂР°С‚Р° С‚СЂСѓРґРѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё СЃ С‚Р°Р±Р»РёС†РµР№ СЃРјРµСЂС‚РЅРѕСЃС‚Рё
   function disability_with_mortality_personality(ipnpt_id number) return number
   is
 --    stop_age    date;
@@ -665,7 +665,7 @@ create or replace package body aktuar_2020 is
     years_before_pension number(10,8);
     error       pls_integer default 0;
     curr_summ number(19,2);
-    expect_duration_live  number(10,7); -- Средняя ожидаемая продолжительность жизни до пенсии
+    expect_duration_live  number(10,7); -- РЎСЂРµРґРЅСЏСЏ РѕР¶РёРґР°РµРјР°СЏ РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ Р¶РёР·РЅРё РґРѕ РїРµРЅСЃРёРё
     cur sswh.aktuar_dependant%rowtype;
   begin
     v_date_calculate:='01.08.2020';
@@ -712,14 +712,14 @@ create or replace package body aktuar_2020 is
         'sum_pay: '||cur.sum_pay||chr(10)||
         'expect_duration_live: '||expect_duration_live||chr(10)||
         'years_before_pension: '||years_before_pension||chr(10)||
-        'окр_вверх_years_before_pension: '||ceil(years_before_pension)||chr(10)||
+        'РѕРєСЂ_РІРІРµСЂС…_years_before_pension: '||ceil(years_before_pension)||chr(10)||
         'RESULT: '||curr_summ
                                     );
 --*/
     return curr_summ;
   end disability_with_mortality_personality;
 
-  --утрата трудоспособности без таблицы смертности
+  --СѓС‚СЂР°С‚Р° С‚СЂСѓРґРѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё Р±РµР· С‚Р°Р±Р»РёС†С‹ СЃРјРµСЂС‚РЅРѕСЃС‚Рё
   procedure disability_without_mortality(iid_calc pls_integer)
   is
     stop_age    date;
@@ -730,7 +730,7 @@ create or replace package body aktuar_2020 is
     curr_summ number(19,2);
     all_summ number(19,2);
   begin
-    /*ЕСЛИ(ИЛИ(G8<F8;G8<Summary!$B$30);
+    /*Р•РЎР›Р(РР›Р(G8<F8;G8<Summary!$B$30);
               "ERROR";
       12*H8*: sum_pay
       (M8-Summary!$B$30)/365,25)
@@ -738,7 +738,7 @@ create or replace package body aktuar_2020 is
     all_summ:=0;
 
     delete from model_calculates mc where mc.id_calc = iid_calc and mc.calc_type = 'W';
-    log('0702: Type=W. Для ID_CALC: '||iid_calc||', удалено записей: '||sql%rowcount);
+    log('0702: Type=W. Р”Р»СЏ ID_CALC: '||iid_calc||', СѓРґР°Р»РµРЅРѕ Р·Р°РїРёСЃРµР№: '||sql%rowcount);
     commit;
     
     for cur in( select *
@@ -767,7 +767,7 @@ create or replace package body aktuar_2020 is
         all_summ:=all_summ+curr_summ;
         print_line(iid_calc, 'W', cur.pnpt_id, cur.RFPM_ID, curr_summ, cur.stopdate);
       exception when others then 
-        log( '0702: Type=W, Ошибка pnpt_id: '||cur.pnpt_id||', age_valuation: '||age_valuation||
+        log( '0702: Type=W, РћС€РёР±РєР° pnpt_id: '||cur.pnpt_id||', age_valuation: '||age_valuation||
              ', stop_age: '||stop_age||',  years_before_pension:'|| years_before_pension||
              ', error: '||error||', all_sum: '||all_summ||', error: '||sqlerrm);
       end;
@@ -784,24 +784,24 @@ create or replace package body aktuar_2020 is
     error       pls_integer default 0;
     curr_summ number(19,2);
     all_summ number(19,2);
-    expect_duration_live  number(10,7); -- Средняя ожидаемая продолжительность жизни до пенсии
+    expect_duration_live  number(10,7); -- РЎСЂРµРґРЅСЏСЏ РѕР¶РёРґР°РµРјР°СЏ РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ Р¶РёР·РЅРё РґРѕ РїРµРЅСЃРёРё
   begin
     /*
-    ЕСЛИ( ИЛИ(M8<F8;M8<Summary!$B$30);
+    Р•РЎР›Р( РР›Р(M8<F8;M8<Summary!$B$30);
           "ERROR";
-          ЕСЛИ(W8=0;0;12*H8*(U8/V8)*W8)
+          Р•РЎР›Р(W8=0;0;12*H8*(U8/V8)*W8)
         )
-   Где M8: birthdate+retAge*365,25
-   где retAge:=ЕСЛИ(C8=1;63;ЕСЛИ(D8<ДАТА(1960;1;1);58;ЕСЛИ(D8<ДАТА(1960;7;1);58,5;ЕСЛИ(D8<ДАТА(1961;1;1);59;ЕСЛИ(D8<ДАТА(1961;7;1);59,5;ЕСЛИ(D8<ДАТА(1962;1;1);60;ЕСЛИ(D8<ДАТА(1962;7;1);60,5;ЕСЛИ(D8<ДАТА(1963;1;1);61;ЕСЛИ(D8<ДАТА(1963;7;1);61,5;ЕСЛИ(D8<ДАТА(1964;1;1);62;ЕСЛИ(D8<ДАТА(1964;7;1);62,5;63)))))))))))
+   Р“РґРµ M8: birthdate+retAge*365,25
+   РіРґРµ retAge:=Р•РЎР›Р(C8=1;63;Р•РЎР›Р(D8<Р”РђРўРђ(1960;1;1);58;Р•РЎР›Р(D8<Р”РђРўРђ(1960;7;1);58,5;Р•РЎР›Р(D8<Р”РђРўРђ(1961;1;1);59;Р•РЎР›Р(D8<Р”РђРўРђ(1961;7;1);59,5;Р•РЎР›Р(D8<Р”РђРўРђ(1962;1;1);60;Р•РЎР›Р(D8<Р”РђРўРђ(1962;7;1);60,5;Р•РЎР›Р(D8<Р”РђРўРђ(1963;1;1);61;Р•РЎР›Р(D8<Р”РђРўРђ(1963;7;1);61,5;Р•РЎР›Р(D8<Р”РђРўРђ(1964;1;1);62;Р•РЎР›Р(D8<Р”РђРўРђ(1964;7;1);62,5;63)))))))))))
 
    F8: AppointDate
-   W8: ЕСЛИ(C8=1;(ВПР(T8;com;6)-ВПР(T8+V8;com;6))/ВПР(T8;com;4);ЕСЛИ(C8=0;(ВПР(T8;com;7)-ВПР(T8+V8;com;7))/ВПР(T8;com;5);"Error"))
+   W8: Р•РЎР›Р(C8=1;(Р’РџР (T8;com;6)-Р’РџР (T8+V8;com;6))/Р’РџР (T8;com;4);Р•РЎР›Р(C8=0;(Р’РџР (T8;com;7)-Р’РџР (T8+V8;com;7))/Р’РџР (T8;com;5);"Error"))
     */
     all_summ:=0;
     expect_duration_live:=0;
     
     delete from model_calculates mc where mc.id_calc = iid_calc and mc.calc_type = 'M';
-    log('0702: Type=M. Для ID_CALC: '||iid_calc||', удалено записей: '||sql%rowcount);
+    log('0702: Type=M. Р”Р»СЏ ID_CALC: '||iid_calc||', СѓРґР°Р»РµРЅРѕ Р·Р°РїРёСЃРµР№: '||sql%rowcount);
     commit;
     
     for cur in( select *
@@ -849,7 +849,7 @@ create or replace package body aktuar_2020 is
   --*/
         print_line(iid_calc, 'M', cur.pnpt_id, cur.RFPM_ID, curr_summ, stop_date);
       exception when others then
-        log( '0702: Type=M, Ошибка pnpt_id: '||cur.pnpt_id||', age_valuation: '||age_valuation||
+        log( '0702: Type=M, РћС€РёР±РєР° pnpt_id: '||cur.pnpt_id||', age_valuation: '||age_valuation||
              ', stop_date: '||stop_date||', years_before_pension:'|| years_before_pension||
              ', error: '||error||', all_sum: '||all_summ||', error: '||sqlerrm);
       end;
@@ -862,14 +862,14 @@ create or replace package body aktuar_2020 is
     all_summ number(19,2);
   begin
 /*
-ЕСЛИ(ИЛИ(G8<F8;G8<Summary!$B$30);"ERROR";12*H8*(G8-Summary!$B$30)/365,25)
+Р•РЎР›Р(РР›Р(G8<F8;G8<Summary!$B$30);"ERROR";12*H8*(G8-Summary!$B$30)/365,25)
   G8: StopDate
   F8: AppointDate
   Summary!$B$30: v_calculation_date
   H8: sum_pay
 */
     all_summ:=0;
-    log('ChildCare стартовал');
+    log('ChildCare СЃС‚Р°СЂС‚РѕРІР°Р»');
     for cur in( select ad.*, rowid
                 from sswh.aktuar_dependant ad
                 where ad.mnth=v_date_calculate
@@ -887,7 +887,7 @@ create or replace package body aktuar_2020 is
       all_summ:=all_summ+curr_summ;
       print_line(iid_calc, '0', cur.pnpt_id, cur.RFPM_ID, curr_summ, cur.stopdate);
     end loop;
-    log('ChildCare завершил работу успешно. Общая сумма: '||all_summ);
+    log('ChildCare Р·Р°РІРµСЂС€РёР» СЂР°Р±РѕС‚Сѓ СѓСЃРїРµС€РЅРѕ. РћР±С‰Р°СЏ СЃСѓРјРјР°: '||all_summ);
   end childcare;
 
   procedure proc_childcare(iid_calc pls_integer, idate date)
@@ -906,7 +906,7 @@ create or replace package body aktuar_2020 is
     all_summ number(19,2);
   begin
 /*
-ЕСЛИ(ИЛИ(G9<F9;G9<Summary!$B$30);"ERROR";H9*(G9-Summary!$B$30)/30,25)
+Р•РЎР›Р(РР›Р(G9<F9;G9<Summary!$B$30);"ERROR";H9*(G9-Summary!$B$30)/30,25)
   G9: StopDate
   F9: AppointDate
   Summary!$B$30: v_calculation_date

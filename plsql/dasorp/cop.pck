@@ -1,6 +1,6 @@
 create or replace package cop is
 
-  -- Author  : ГУСЕЙНОВ_Ш
+  -- Author  : Р“РЈРЎР•Р™РќРћР’_РЁ
   -- Created : 02.11.2020 16:13:15
   -- Purpose : 
   
@@ -43,7 +43,7 @@ create or replace package body cop is
     exception when dup_val_on_index then
       begin
         insert into protocol(event_date, message) values(sysdate, 'New User duplicate user name: '||uname);
-        imess:='Такое имя в системе уже существует';
+        imess:='РўР°РєРѕРµ РёРјСЏ РІ СЃРёСЃС‚РµРјРµ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚';
         commit;
       end;
   end;
@@ -93,7 +93,7 @@ create or replace package body cop is
             commit;
         else
           insert into protocol(event_date, message) values(sysdate, 'New User duplicate user name: '||uname);
-          imess:='Такое имя в системе уже существует';
+          imess:='РўР°РєРѕРµ РёРјСЏ РІ СЃРёСЃС‚РµРјРµ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚';
           commit;
         end if;
       end;

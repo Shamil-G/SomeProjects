@@ -122,7 +122,7 @@ begin
 --  secmgr.sec_ctx.log('-+- finish -+-');
 end generate_questions;
 
--- генерация вопросов
+-- РіРµРЅРµСЂР°С†РёСЏ РІРѕРїСЂРѕСЃРѕРІ
 procedure generate_questions(iid_registration number, iid_theme number, icount_questions number)
 is begin
   for cur in (select code from supp_lang)
@@ -131,7 +131,7 @@ is begin
   end loop;
 end;
 
--- проверка допустимости регистрации
+-- РїСЂРѕРІРµСЂРєР° РґРѕРїСѓСЃС‚РёРјРѕСЃС‚Рё СЂРµРіРёСЃС‚СЂР°С†РёРё
 function checkUserForTesting(iid_person in number,
          iid_bundle in number,
          idate_testing in date)
@@ -147,12 +147,12 @@ begin
   if iid_bundle is null
   then
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Проверка кандидата на допуск к тестированию',
+            ioperation=>'РџСЂРѕРІРµСЂРєР° РєР°РЅРґРёРґР°С‚Р° РЅР° РґРѕРїСѓСЃРє Рє С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЋ',
             imodule=>'checkUserForTesting',
-            imessage=> 'Не допущен кандидат '||
+            imessage=> 'РќРµ РґРѕРїСѓС‰РµРЅ РєР°РЅРґРёРґР°С‚ '||
              user_name(iid_person)||chr(10)||
-             ': задания для тестирования не выбраны' );
-    return 'Задания для тестирования не выбраны';
+             ': Р·Р°РґР°РЅРёСЏ РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РЅРµ РІС‹Р±СЂР°РЅС‹' );
+    return 'Р—Р°РґР°РЅРёСЏ РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РЅРµ РІС‹Р±СЂР°РЅС‹';
   end if;
 
   if sys_context('gsec_ctx','Production')='N'
@@ -161,7 +161,7 @@ begin
   end if;
 --  secmgr.sec_ctx.log('-+- v_id_equal_category: '||v_id_equal_category||', iid_kind_testing: '||iid_kind_testing);
 --/*
--- Проверка сроков на допустимость повторного тестирования
+-- РџСЂРѕРІРµСЂРєР° СЃСЂРѕРєРѕРІ РЅР° РґРѕРїСѓСЃС‚РёРјРѕСЃС‚СЊ РїРѕРІС‚РѕСЂРЅРѕРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
   begin
     select b.id_equal_bundle, e.interval_first, e.interval_second
     into   v_id_equal_bundle, v_interval_first, v_interval_second
@@ -182,7 +182,7 @@ begin
                         and   r.id_bundle in ( select id_bundle
                                                 from TEST_OPERATOR.bundle b
                                                 where b.id_equal_bundle=v_id_equal_bundle )
-                        and   r.status!='Неявка'
+                        and   r.status!='РќРµСЏРІРєР°'
                         --and   (sysdate-r.date_registration)<360
                         order by 1 desc ) t
                 where rownum<3)
@@ -197,20 +197,20 @@ begin
           v_first:=Cur.Beg_Time_Testing;
           if (idate_testing-v_first)<v_interval_first
           then
-              str:= 'После последнего тестирования прошло всего '||
+              str:= 'РџРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
                     trunc((idate_testing -
                     to_date(to_char(v_first,'dd.mm.yyyy'),'dd.mm.yyyy')))||
-                    ' дней, должно быть: '||
+                    ' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_first;
           end if;
         else
           v_first:=Cur.Date_Testing;
           if  (idate_testing - v_first)<v_interval_first
           then
-              str:= 'После последнего тестирования прошло всего '||
+              str:= 'РџРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
                     trunc((idate_testing -
                     to_date(to_char(v_first,'dd.mm.yyyy'),'dd.mm.yyyy')))||
-                    ' дней, должно быть: '||
+                    ' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_first;
           end if;
         end if;
@@ -219,10 +219,10 @@ begin
     then
           if (idate_testing-v_first)<v_interval_second
           then
-              str:= 'После последнего тестирования прошло всего '||
+              str:= 'РџРѕСЃР»Рµ РїРѕСЃР»РµРґРЅРµРіРѕ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРѕС€Р»Рѕ РІСЃРµРіРѕ '||
                     trunc((idate_testing -
                     to_date(to_char(v_first,'dd.mm.yyyy'),'dd.mm.yyyy')))||
-                    ' дней, должно быть: '||
+                    ' РґРЅРµР№, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ: '||
                     v_interval_second;
 
           end if;
@@ -252,13 +252,13 @@ begin
   if (str is not null)
   then
       secmgr.sec_ctx.log(iDebug=>5,iappname=>'Registr',
-            ioperation=>'Проверка кандидата на допуск к тестированию',
+            ioperation=>'РџСЂРѕРІРµСЂРєР° РєР°РЅРґРёРґР°С‚Р° РЅР° РґРѕРїСѓСЃРє Рє С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЋ',
             imodule=>'checkUserForTesting',
-            imessage=> 'Не допущен кандидат '||
+            imessage=> 'РќРµ РґРѕРїСѓС‰РµРЅ РєР°РЅРґРёРґР°С‚ '||
              helper.getfio(iid_person)||chr(10)||
-             ', Ид регистр.: '||iid_registration ||
-             ', Программа: '||iid_bundle||': '||helper.getNameBundle(iid_bundle) ||
-             ', ошибка: '||str );
+             ', РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration ||
+             ', РџСЂРѕРіСЂР°РјРјР°: '||iid_bundle||': '||helper.getNameBundle(iid_bundle) ||
+             ', РѕС€РёР±РєР°: '||str );
      return str;
   end if;
 
@@ -277,7 +277,7 @@ begin
           sys_context('SEC_CTX','id_emp'),
           sys_context('SEC_CTX','id_region'),
           idate_testing,
-          'Готов',
+          'Р“РѕС‚РѕРІ',
           null, null,
           iend_day_testing, 'ru');
 
@@ -285,7 +285,7 @@ begin
                           id_current_theme,  last_time_access,
                           status)
       values ( iid_registration,
-             iid_bundle, null, null, 'Готов');
+             iid_bundle, null, null, 'Р“РѕС‚РѕРІ');
 
       v_id_param:=-1;
       v_first_theme:=true;
@@ -340,7 +340,7 @@ begin
                    Cur.count_success,
                    case when Cur.Is_Groups='Y' then 0 else Cur.period_for_testing*60 end,
                    0,
-                   'Готов' );
+                   'Р“РѕС‚РѕРІ' );
 
              generate_questions(iid_registration, Cur.id_theme, Cur.count_question);
              if v_first_theme=true then
@@ -352,7 +352,7 @@ begin
                 set    t1.period_for_testing=v_period_testing
                 where t1.id_registration=iid_registration;
 --                secmgr.sec_ctx.log('Registr','Update Testing','r_new',
---                        'Пользователь '||
+--                        'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ '||
 --                        helper.getfiobyidreg(iid_registration)||chr(10)||
 --                        ', id_registration: '||iid_registration ||
 --                        ', first_id_question: '||v_first_id_question||
@@ -362,9 +362,9 @@ begin
           end loop;
         commit;
         secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Регистрация',
+            ioperation=>'Р РµРіРёСЃС‚СЂР°С†РёСЏ',
             imodule=>'r_new',
-            imessage=> 'Успешно зарегистрирован пользователь '||
+            imessage=> 'РЈСЃРїРµС€РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ '||
                         helper.getfiobyidreg(iid_registration)||chr(10)||
                         ', id_registration: '||iid_registration);
         return '';
@@ -381,7 +381,7 @@ begin
   from registration r
   where r.id_registration=iid_registration;
 
-  if v_status in ('Готов')
+  if v_status in ('Р“РѕС‚РѕРІ')
   then
     update test_operator.registration r
     set  r.id_emp=sys_context('SEC_CTX','id_person'),
@@ -399,12 +399,12 @@ begin
   update registration r
   set r.status=str
   where r.id_registration=iid_registration
-  and   r.status not in ('Неявка');
+  and   r.status not in ('РќРµСЏРІРєР°');
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-        ioperation=>'Блокировка теста',
+        ioperation=>'Р‘Р»РѕРєРёСЂРѕРІРєР° С‚РµСЃС‚Р°',
         imodule=>'r_lock',
-        imessage=> 'Ид регистр.: '||iid_registration||
-                    ', Блокирован пользователь: '||
+        imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                    ', Р‘Р»РѕРєРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                     helper.getfiobyidreg(iid_registration) );
   commit;
 end r_lock;
@@ -413,15 +413,15 @@ procedure r_unlock(iid_registration in number)
 as
 begin
   update registration r
-  set r.status='Разблокирован Администратором',
+  set r.status='Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј',
       r.id_pc=null
   where r.id_registration=iid_registration
-  and   r.status not in ('Неявка');
+  and   r.status not in ('РќРµСЏРІРєР°');
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-        ioperation=>'Разблокировка теста',
+        ioperation=>'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІРєР° С‚РµСЃС‚Р°',
         imodule=>'r_unlock',
-        imessage=> 'Ид регистр.: '||iid_registration||
-                    ', Блокирован пользователь: '||
+        imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                    ', Р‘Р»РѕРєРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                     helper.getfiobyidreg(iid_registration) );
 commit;
 end r_unlock;
@@ -447,10 +447,10 @@ procedure remove_registration(iid_registration in number) as
     delete from TEST_OPERATOR.testing t where t.id_registration=iid_registration;
     delete from TEST_OPERATOR.registration r where r.id_registration=iid_registration;
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Удаление регистрации',
+            ioperation=>'РЈРґР°Р»РµРЅРёРµ СЂРµРіРёСЃС‚СЂР°С†РёРё',
             imodule=>'remove_registration',
-            imessage=> 'Ид регистр.: '||iid_registration||
-                        ', пользователь: '||
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                         helper.getfiobyidreg(iid_registration) );
 end remove_registration;
 procedure change_lock_status(iid_registration in number)
@@ -461,22 +461,22 @@ begin
     into v_status
     from test_operator.registration r
     where r.id_registration=iid_registration;
-    if substr(lower(v_status), 1, 5)='блоки' then
+    if substr(lower(v_status), 1, 5)='Р±Р»РѕРєРё' then
         r_unlock(iid_registration);
         secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Разблокировка теста',
+            ioperation=>'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІРєР° С‚РµСЃС‚Р°',
             imodule=>'change_lock_status',
-            imessage=> 'Ид регистр.: '||iid_registration||
-                        ', Разблокирован пользователь: '||
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                         helper.getfiobyidreg(iid_registration) );
     else
-    if substr(lower(v_status), 1, 5) in ('разбл', 'готов') then
+    if substr(lower(v_status), 1, 5) in ('СЂР°Р·Р±Р»', 'РіРѕС‚РѕРІ') then
         r_lock(iid_registration);
         secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Разблокировка теста',
+            ioperation=>'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІРєР° С‚РµСЃС‚Р°',
             imodule=>'change_lock_status',
-            imessage=> 'Ид регистр.: '||iid_registration||
-                        ', Блокирован пользователь: '||
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', Р‘Р»РѕРєРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                         helper.getfiobyidreg(iid_registration) );
     end if;
     end if;
@@ -487,15 +487,15 @@ procedure lock_to_absent(iid_registration in number)
 is
 begin
     update test_operator.registration r
-    set r.status='Неявка'
+    set r.status='РќРµСЏРІРєР°'
     where r.id_registration=iid_registration;
     remove_registration(iid_registration);
 
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-            ioperation=>'Неявка',
+            ioperation=>'РќРµСЏРІРєР°',
             imodule=>'lock_to_absent',
-            imessage=> 'Ид регистр.: '||iid_registration||
-                        ', Блокирован пользователь: '||
+            imessage=> 'РРґ СЂРµРіРёСЃС‚СЂ.: '||iid_registration||
+                        ', Р‘Р»РѕРєРёСЂРѕРІР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: '||
                         helper.getfiobyidreg(iid_registration) );
     commit;
     exception when no_data_found then null;
@@ -505,21 +505,21 @@ procedure check_default
 is
 begin
     For cur in ( select * from test_operator.registration r
-                where r.status in ('Готов')
+                where r.status in ('Р“РѕС‚РѕРІ')
                 and trunc(r.date_testing,'dd')<trunc(sysdate,'dd')
                 and coalesce(r.end_day_testing,r.date_testing)<trunc(sysdate)
             )
     loop
 --        update test_operator.registration r
---        set r.status='Неявка'
+--        set r.status='РќРµСЏРІРєР°'
 --        where r.id_registration=cur.id_registration;
         remove_registration(cur.id_registration);
 
     secmgr.sec_ctx.log(iDebug=>5, iappname=>'Registr',
-        ioperation=>'Контроль Системой "Неявок"',
+        ioperation=>'РљРѕРЅС‚СЂРѕР»СЊ РЎРёСЃС‚РµРјРѕР№ "РќРµСЏРІРѕРє"',
         imodule=>'checkDefault',
-        imessage=> 'Неявка. Ид регистр.: '||cur.id_registration||
-            ', Кандидат: '||helper.getfiobyidreg(cur.id_registration) );
+        imessage=> 'РќРµСЏРІРєР°. РРґ СЂРµРіРёСЃС‚СЂ.: '||cur.id_registration||
+            ', РљР°РЅРґРёРґР°С‚: '||helper.getfiobyidreg(cur.id_registration) );
     end loop;
 --rollback;
 commit;
